@@ -1,0 +1,5 @@
+Instale essas bibliotecas pelo gerenciador de bibliotecas da IDE ou manualmente
+O importante é que elas estejam no diretório principal da IDE para poderem ser
+referenciadas no programa diretamente.
+
+PARA INSTALAR basta acessar a IDE do Arduino e acessar o menu Sketch -> Incluir Biblioteca -> Adicionar Bibioteca .ZIP e selecionar o arquivo .zip da bilbioteca.
