@@ -73,7 +73,7 @@ void requestServer()
 
 String createRequest()
 {
-  String body = "{\"Temperatura\":" + (String)dht.readTemperature() + ",\"Umidade\":" + (String)dht.readHumidity() + ",\"SensorID\":\"1234\"}";
+  String body = "{\"Temperatura\": " + (String)dht.readTemperature() + ",\"Umidade\": " + (String)dht.readHumidity() + "Luminosidade: " + convertToLux(analogRead(LDR_PIN)) + ",\"SensorID\":\"1234\"}";
 
   String req;
   req =  "POST " + (String)route + (String)query + " HTTP/1.1\r\n";

@@ -5,14 +5,20 @@
 #include <FS.h>
 #include <DHT.h>
 
-#define DHT_PIN 2//               <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
-#define DHT_TYPE DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
+#define DHT_PIN       2//               <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
+#define DHT_TYPE      DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
+#define LDR_PIN       A0
+#define SIGNAL_LED    D5
 //#include <ESP6266WebServer.h>
 
 //Protótipos de funções
+//connection_functions
 void initAsyncWebServer();
 void ifStatus();
 void requestServer();
+
+//Sensors
+float convertToLux ( int value );
 //
 
 //Configurações de Sensores
@@ -56,16 +62,15 @@ void setup()
 
 void loop()
 {
-    unsigned long timerControl = millis();//O tempo atual em que o programa se encontra
-  
-  //se a diferença entre o momento atual e o do último envio for maior ou igual ao intervalo definido
-  
-  if((unsigned long)timerControl - counter >= interval*1000){
-    
-    //requestServer(); //envia-se os dados
+    unsigned long timerControl = millis();
 
-    //counter recebe o momento em que os dados foram enviados
-    counter = timerControl;
-    Serial.println("[Enviando dados ao servidor]");
-  }
+
+  
+    if ((unsigned long)timerControl - counter >= interval*1000) {
+      Serial.println("[LDR SENSOR:]\n");
+      Serial.println(convertToLux(analogRead(LDR_PIN)));
+      //requestServer();
+      counter = timerControl;
+      Serial.println("[Enviando dados ao servidor]");
+    }
 }
