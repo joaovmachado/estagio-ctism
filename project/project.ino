@@ -47,7 +47,8 @@ void setup()
     //WiFi.config(ip, gateway, subnet);
 
     AsyncWiFiManager wifiManager(&server,&dns);
-    wifiManager.autoConnect("AP_ESP");
+    wifiManager.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória
+    // wifiManager.startConfigPortal(); // Inicia a página de configuração, sem consultar a memória
     initAsyncWebServer();
     ifStatus();
     
