@@ -8,6 +8,7 @@
     Serial.println("Umidade: " + (String)humidity);
 }
 */
+
 float convertToLux ( int value )
 {
   float vout = ( value * ( 5.0 / 1024.0 ) );

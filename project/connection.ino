@@ -1,4 +1,5 @@
 /*
+  CONTEÚDO
     startWiFi (inicia conexão WiFi)
     ifStatus (exibe interface de rede)
     requestServer (prepara requisição ao servidor)
@@ -73,7 +74,8 @@ void requestServer()
 
 String createRequest()
 {
-  String body = "{\"Temperatura\": " + (String)dht.readTemperature() + ",\"Umidade\": " + (String)dht.readHumidity() + "Luminosidade: " + convertToLux(analogRead(LDR_PIN)) + ",\"SensorID\":\"1234\"}";
+  extern String json;
+  String body = json;
 
   String req;
   req =  "POST " + (String)route + (String)query + " HTTP/1.1\r\n";
