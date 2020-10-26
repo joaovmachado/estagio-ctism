@@ -33,7 +33,7 @@ void initAsyncWebServer() {
       interval = server.arg("input1").toFloat(); //busca o valor float do input intervalo
       unit = server.arg("unit").toInt(); //busca o valor int do input unit
 
-      interval = interval * unit; //coloca o intervalo na unidade imformada
+      interval = interval * unit; //coloca o intervalo na unidade informada
 
       server.send(200, "text/html", get_html);
     }
@@ -42,25 +42,28 @@ void initAsyncWebServer() {
     }
   });
 
-  server.on("/interval", HTTP_GET, [](){ //quando o javascript fizer uma requisição em /interval
-    server.send(200, "text/plain", String(interval)); //enviamos o text/plain com o intervalo
-  });
-
-  server.on("/css.css", HTTP_GET, [](){
+  //Requisições do HTML
+   server.on("/css.css", HTTP_GET, [](){
     server.send_P(200, "text/css", css);
   });
 
   server.on("/script.js", HTTP_GET, [](){
     server.send_P(200, "text/javascript", script_interval);
   });
-    
-    /*server.on("/temperature", HTTP_GET, [](){
-    server.send(200, "text/plain", temperature); 
-    });
 
-    server.on("/humidity", HTTP_GET, [](){
-    server.send(200, "text/plain", humidity); 
-    });*/
+  //Requisições do Javascript
+  server.on("/interval", HTTP_GET, [](){ 
+    server.send(200, "text/plain", String(interval));
+  });
+   
+  server.on("/temperature", HTTP_GET, [](){
+    server.send(200, "text/plain", String(dht.readTemperature())); 
+  });
+
+  server.on("/humidity", HTTP_GET, [](){
+    server.send(200, "text/plain", String(dht.readHumidity())); 
+  });
+  
 
 
   server.onNotFound(notFound); //chama a função que retorna Erro 404

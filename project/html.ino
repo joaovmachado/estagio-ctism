@@ -8,7 +8,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
-    <link href="css.css" rel="stylesheet" type="text/css">
+    <link href="css.css" rel="stylesheet">
 </head>
 <body>
 
@@ -33,20 +33,28 @@ const char index_html[] PROGMEM = R"rawliteral(
     </section>
         
     <p>O intervalo de medição atual é:</p>
-    <span id="ShowInterval">
-                
+    <span class="ti" id="ShowInterval">
     </span>
 
-        <script>
-            document
-            .querySelector('header button')
-            .addEventListener("click", function(){
-            document
-            .querySelector('.form')
-            .classList.toggle('hide');
-            });
-        </script>
+    
+    <p>Temperatura (°C): </p>
+    <span class="ti" id="temperature">
+    </span>
 
+    <p>Umidade: </p>
+    <span class="ti" id="humidity">
+    </span>
+
+    <script>
+        document
+        .querySelector('header button')
+        .addEventListener("click", function(){
+        document
+        .querySelector('.form')
+        .classList.toggle('hide');
+        });
+    </script>
+    
     <script type="text/javascript" src="script.js"></script>
 
 </body>
@@ -58,172 +66,161 @@ const char get_html[] PROGMEM = R"rawliteral(
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Get</title>
-    <link href="css.css" rel="stylesheet" type="text/css">
+    <title>Novo Intervalo</title>
+    <link href="css.css" rel="stylesheet">
 </head>
 <body>
 
-  <h1>Novo intervalo de tempo definido</h1><br>
-  <p>O intervalo de medição atual é:</p>
-    <span id="ShowInterval">
-        </span>        
-            
-  <br> <a href="/">Voltar à página inicial</a>
+  <h1>Novo intervalo de tempo definido</h1>
 
-   <script type="text/javascript" src="script.js"></script>
+  <p>O intervalo de medição atual é:</p>
+
+  <span class="ti" id="ShowInterval">
+  </span>       
+            
+  <a href="/">Voltar à página inicial</a>
+
+  <script type="text/javascript" src="script.js"></script>
+
 </body>
-</html>
-)rawliteral";
+</html>)rawliteral";
 
 const char css[] PROGMEM = R"rawliteral(
-  /*Global*/
-
-        *{
-            /*Corrigindo comportamento padrão do css*/
-            box-sizing: border-box;
-        }
-        
-        html, body{
-            margin: 0;
-        }
-        
-        body{
-            display: flex;
-            flex-direction: column;
-        
-            height: 100vh;
-        
-            font-family: Arial, Helvetica, sans-serif;
-        
-            background-color: #f9f9f9 ;
-
-            text-align: center;
-            
-        }
-        
-        h1{
-            color: #000000cc;
-        }
-
-        /*HEADER*/
-        header button{
-            margin-top: 16px;
-            padding: 9px 16px;
-            border-radius: 4px;
-            border: none;
-
-            background-color: #50a8a1;
-            color: white;
-
-            font-weight: bold;
-
-        }   
-        
-
-        header, .form{
-            /*espaçamentos com margin*/
-            margin: 0 auto 70px;
-        
-            /*limite dos elementos da página*/
-            width: 90%;
-            max-width: 500px;
-        }
-
-        
-        /*FORM*/
-        form{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-gap: 45px;
-        
-            align-items: center;
-        
-            background-color: #54a086;
-        
-            padding: 16px 64px;
-        
-            border-radius: 6px;
-        } 
-        
-        form input, form button{
-        
-            /*largura*/
-            width: 110%;
-        
-            /*espaçamento*/
-            margin-bottom: 4px;
-        
-            /*preechimento*/
-            padding: 8px 16px;
-        
-            /*Bordas*/
-            border-radius: 4px;
-            border: 1px #ffffff88 solid;
-        
-        }
-        
-        form input{
-            background-color: transparent;
-        }
-        
-        form input::placeholder{
-            color: #ffffffaa;
-        }
-        
-        form button{
-            font-weight: bold;
-        }
-        
-
-        /*JVS*/
-        section.form{
-            transition: all 300ms;
-        }
-        
-        section.form.hide{
-            opacity: 0;
-            visibility: hidden;
-            height: 0;
-            margin-top: -70px;   
-        }
-
-        span{
-            font-size: 15pt;
-            color: #54a086;
-            font-weight: bolder;
-        }
-
-        a{
-            text-decoration: default;
-            margin-top: 15px;
-            color: #54a086;
-        }
-        
+      *{
+        margin: 0;
+        border: 0;
+    }
+    
+    body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    
+    h1, .ti{
+        color: #52658C;
+        font-weight: 700;
+        padding: 20px;
+        text-align: center;
+    }
+    
+    .ti{
+        font-size: 20pt;
+    }
+    
+    p, header button{
+        font-size: 15pt;
+        font-weight: 600;
+        color: #7685A8;
+    }
+    
+    header button{
+        padding: 15px;
+        margin-bottom: 30px;
+        border-radius: 20px;
+    }
+    
+    
+    form{
+        border: 2px solid #7685A8;
+        padding: 25px;
+        border-radius: 20px;
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-template-areas:
+                            "input select"
+                            "button button";
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    
+    form *{
+        text-align: center;
+        font-weight: 600;
+        font-size: 12pt;
+        color: #7685A8;
+        background-color: #F0F0F0;
+        border-radius: 20px;
+        height: 50px;
+    }
+    
+    form input[type="number"]{
+        grid-area: input;
+    }
+    
+    form select{
+        grid-area: select;
+    }
+    
+    form input[type="submit"]{
+        grid-area: button;
+    }
+    
+    section.form.hide{
+        opacity: 0;
+        visibility: hidden;
+        height: 0;
+    }
+    
+    a{
+        text-decoration: none;
+        background-color: #F0F0F0;
+        color: #7685A8;
+        padding: 15px;
+        border-radius: 20px;
+    }  
 )rawliteral";
 
 const char script_interval[] PROGMEM = R"rawliteral(
-
-            var showInterval = document.getElementById("ShowInterval");
-var http = new XMLHttpRequest();
-
-http.onreadystatechange = function(){ //é executada sempre que o status mudar
-                
-    if(this.status == 200){
-        showInterval.innerHTML = detectUnit(this.responseText); //exibe a o texto recebido  
-    }
-};
-
-    http.open("GET", "/interval", true); //metodo - url - async
-    http.send();
-
-function detectUnit(interval){
-    interval = parseFloat(interval);
-    console.log(interval);
-    if(interval >= 3600) return `${interval/3600} hora(s)`
-    else if(interval >= 60) return `${interval/60} minuto(s)`;
-    else if(interval >= 1) return `${interval} segundo(s)`;
-    else return;
-}
-
-        
+  function detectUnit(interval){
+      interval = parseFloat(interval);
+      console.log(interval);
+      if(interval >= 3600) return `${(interval/3600).toFixed(2)} hora(s)`
+      else if(interval >= 60) return `${(interval/60).toFixed(2)} minuto(s)`;
+      else if(interval >= 1) return `${interval} segundo(s)`;
+      else return;
+  }
+  
+  var ihttp = new XMLHttpRequest();
+  ihttp.onreadystatechange = function(){ //é executada sempre que o status mudar
+                  
+      if(this.status == 200){
+          document.getElementById("ShowInterval").innerHTML = detectUnit(this.responseText); //exibe a o texto recebido  
+      }
+  };
+  
+  ihttp.open("GET", "/interval", true); //método - url - async
+  ihttp.send();
+  
+  
+  //temperatura
+  setInterval(function(){
+      var http = new XMLHttpRequest();
+  
+      http.onreadystatechange = function() {
+        if (this.status == 200) {
+          document.getElementById("temperature").innerText = this.responseText;
+        }
+      };
+  
+      http.open("GET", "/temperature", true);
+      http.send();
+  
+      }, 1000);
+  
+  //umidade
+  setInterval(function(){
+      var http = new XMLHttpRequest();
+  
+      http.onreadystatechange = function() {
+        if (this.status == 200) {
+          document.getElementById("humidity").innerText = this.responseText;
+        }
+      };
+  
+      http.open("GET", "/humidity", true);
+      http.send();
+  
+      }, 1000);
 )rawliteral";
