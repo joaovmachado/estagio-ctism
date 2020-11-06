@@ -1,9 +1,30 @@
-#include <ESP8266WebServer.h>
-#include <FS.h>
+unsigned long interval = 15000;
 
-//valor padrão do intervalo de medição em segundos
-float interval = 15.0;
-int unit = 1;
+int getInterval() {
+
+  Serial.println("\nIniciando LittleFS...");
+  if (!LittleFS.begin()) {
+    Serial.println(" [ERRO]");
+    return 15000;
+  }
+  
+  interval = readFile("/data/interval.txt").toInt();
+  LittleFS.end();
+  //Serial.print("Intervalo definido para: "); Serial.println(interval);
+  return interval;
+}
+
+void setInterval( int value ) {
+  Serial.println("\nIniciando LittleFS...");
+  if (!LittleFS.begin()) {
+    Serial.println(" [ERRO]");
+    Serial.println("\t O valor de interval não foi alterado");
+    return;
+  }
+
+  writeFile("/data/interval.txt", (String)value); //Escreve o intervalo obtido na memoria
+}
+
 
 extern const char PROGMEM index_html[]; //String HTML
 extern const char PROGMEM get_html[];
@@ -22,19 +43,25 @@ void notFound() {
 void initAsyncWebServer() {
 
   //E necessário inicializar rede WiFi -> ou seja, deve vir depois de WiFi.begin()
-  
+  //Ver server.serveStatic -> SPIFFS
   server.on("/", HTTP_GET, [](){ //envia o a string html para o client
     server.send_P(200, "text/html", index_html); //utilizamos send_P porque os dados estão na memeria flash (PROGMEM)
   });
  
   server.on("/get", HTTP_GET, [](){ //quando o client submitar, nosso action o joga na rota de "/get"
-    if (server.hasArg("input1") && server.hasArg("unit")){
+    if (server.hasArg("input1")){
+
+      String response = server.arg("input1");
       
-      interval = server.arg("input1").toFloat(); //busca o valor float do input intervalo
-      unit = server.arg("unit").toInt(); //busca o valor int do input unit
+      int index = response.indexOf(":");
 
-      interval = interval * unit; //coloca o intervalo na unidade informada
+      int hours = response.substring(0, index).toInt() * 60; // Extrai o valor das horas e converte para minutos
+      int minu = response.substring(index + 1).toInt() + hours; // Extrai o valor dos minutos e soma às horas
 
+      interval = minu * 60 * 1000; // Converte para milissegundos
+
+      setInterval(interval);
+      
       server.send(200, "text/html", get_html);
     }
     else {
@@ -64,8 +91,6 @@ void initAsyncWebServer() {
     server.send(200, "text/plain", String(dht.readHumidity())); 
   });
   
-
-
   server.onNotFound(notFound); //chama a função que retorna Erro 404
   
   server.begin();

@@ -21,12 +21,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <section class="form hide">
 
         <form action="/get">
-            <input type="number" min=1 step="0.01" value="1" name="input1" placeholder="Intervalo de medição" required>
-            <select name="unit">
-                <option value="3600" selected>Horas</option>
-                <option value="60">Minutos</option>
-                <option value="1">Segundos</option>
-            </select>
+            <input type="time" id="time" name="input1" min="00:01" required>         
             <input type="submit" value="Enviar">
         </form>
 
@@ -53,6 +48,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         .querySelector('.form')
         .classList.toggle('hide');
         });
+
     </script>
     
     <script type="text/javascript" src="script.js"></script>
@@ -86,141 +82,149 @@ const char get_html[] PROGMEM = R"rawliteral(
 </html>)rawliteral";
 
 const char css[] PROGMEM = R"rawliteral(
-      *{
-        margin: 0;
-        border: 0;
-    }
-    
-    body{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    }
-    
-    h1, .ti{
-        color: #52658C;
-        font-weight: 700;
-        padding: 20px;
-        text-align: center;
-    }
-    
-    .ti{
-        font-size: 20pt;
-    }
-    
-    p, header button{
-        font-size: 15pt;
-        font-weight: 600;
-        color: #7685A8;
-    }
-    
-    header button{
-        padding: 15px;
-        margin-bottom: 30px;
-        border-radius: 20px;
-    }
-    
-    
-    form{
-        border: 2px solid #7685A8;
-        padding: 25px;
-        border-radius: 20px;
-        display: grid;
-        grid-template-columns: 50% 50%;
-        grid-template-areas:
-                            "input select"
-                            "button button";
-        gap: 20px;
-        margin-bottom: 40px;
-    }
-    
-    form *{
-        text-align: center;
-        font-weight: 600;
-        font-size: 12pt;
-        color: #7685A8;
-        background-color: #F0F0F0;
-        border-radius: 20px;
-        height: 50px;
-    }
-    
-    form input[type="number"]{
-        grid-area: input;
-    }
-    
-    form select{
-        grid-area: select;
-    }
-    
-    form input[type="submit"]{
-        grid-area: button;
-    }
-    
-    section.form.hide{
-        opacity: 0;
-        visibility: hidden;
-        height: 0;
-    }
-    
-    a{
-        text-decoration: none;
-        background-color: #F0F0F0;
-        color: #7685A8;
-        padding: 15px;
-        border-radius: 20px;
-    }  
+    *{
+    margin: 0;
+    border: 0;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+h1, .ti{
+    color: #52658C;
+    font-weight: 700;
+    padding: 20px;
+    text-align: center;
+}
+
+.ti{
+    font-size: 20pt;
+}
+
+p, header button{
+    font-size: 15pt;
+    font-weight: 600;
+    color: #7685A8;
+}
+
+header button{
+    padding: 15px;
+    margin-bottom: 30px;
+    border-radius: 20px;
+}
+
+form{
+    border: 2px solid #7685A8;
+    width: 200px;
+    padding: 20px;
+    border-radius: 20px;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-areas:
+                        "input1 input1"
+                        "button button";
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+form *{
+    text-align: center;
+    font-weight: 600;
+    font-size: 12pt;
+    color: #7685A8;
+    background-color: #F0F0F0;
+    border-radius: 20px;
+    height: 50px;
+}
+
+form input[name="input1"]{
+    grid-area: input1;
+}
+
+form input[type="submit"]{
+    grid-area: button;
+}
+
+form label{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+}
+
+section.form.hide{
+    opacity: 0;
+    visibility: hidden;
+    height: 10px;
+}
+
+a{
+    text-decoration: none;
+    background-color: #F0F0F0;
+    color: #7685A8;
+    padding: 15px;
+    border-radius: 20px;
+} 
 )rawliteral";
 
 const char script_interval[] PROGMEM = R"rawliteral(
   function detectUnit(interval){
-      interval = parseFloat(interval);
-      console.log(interval);
-      if(interval >= 3600) return `${(interval/3600).toFixed(2)} hora(s)`
-      else if(interval >= 60) return `${(interval/60).toFixed(2)} minuto(s)`;
-      else if(interval >= 1) return `${interval} segundo(s)`;
-      else return;
-  }
+  interval = parseInt(interval);
+  interval = interval / 1000;
+  console.log(interval);
+  var hrs = Math.floor(interval / (60 * 60));
+  var mins = Math.floor(interval % (60 * 60) / 60);
+
+  if(hrs < 10) hrs = `0${hrs}`;
+  if(mins < 10) mins = `0${mins}`;
   
-  var ihttp = new XMLHttpRequest();
-  ihttp.onreadystatechange = function(){ //é executada sempre que o status mudar
-                  
-      if(this.status == 200){
-          document.getElementById("ShowInterval").innerHTML = detectUnit(this.responseText); //exibe a o texto recebido  
+  return `${hrs}:${mins}`;
+}
+
+var ihttp = new XMLHttpRequest();
+ihttp.onreadystatechange = function(){ //é executada sempre que o status mudar
+                
+    if(this.status == 200){
+        document.getElementById("ShowInterval").innerHTML = detectUnit(this.responseText); //exibe a o texto recebido  
+    }
+};
+
+ihttp.open("GET", "/interval", true); //método - url - async
+ihttp.send();
+
+
+//temperatura
+setInterval(function(){
+    var http = new XMLHttpRequest();
+
+    http.onreadystatechange = function() {
+      if (this.status == 200) {
+        document.getElementById("temperature").innerText = this.responseText;
       }
-  };
-  
-  ihttp.open("GET", "/interval", true); //método - url - async
-  ihttp.send();
-  
-  
-  //temperatura
-  setInterval(function(){
-      var http = new XMLHttpRequest();
-  
-      http.onreadystatechange = function() {
-        if (this.status == 200) {
-          document.getElementById("temperature").innerText = this.responseText;
-        }
-      };
-  
-      http.open("GET", "/temperature", true);
-      http.send();
-  
-      }, 1000);
-  
-  //umidade
-  setInterval(function(){
-      var http = new XMLHttpRequest();
-  
-      http.onreadystatechange = function() {
-        if (this.status == 200) {
-          document.getElementById("humidity").innerText = this.responseText;
-        }
-      };
-  
-      http.open("GET", "/humidity", true);
-      http.send();
-  
-      }, 1000);
+    };
+
+    http.open("GET", "/temperature", true);
+    http.send();
+
+    }, 1000);
+
+//umidade
+setInterval(function(){
+    var http = new XMLHttpRequest();
+
+    http.onreadystatechange = function() {
+      if (this.status == 200) {
+        document.getElementById("humidity").innerText = this.responseText;
+      }
+    };
+
+    http.open("GET", "/humidity", true);
+    http.send();
+
+    }, 1000);
+
 )rawliteral";
