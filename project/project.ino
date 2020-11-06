@@ -43,8 +43,8 @@ unsigned long counter = 0;
 void setup()
 {
   Serial.begin(115200);
-
   LittleFS.begin();
+  setLedsPinMode(); //Inicializa pinMode dos leds de sinalização como output
 
   //WiFi.begin(ssid, passwd);
   //WiFi.config(ip, gateway, subnet);
