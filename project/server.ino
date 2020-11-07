@@ -10,7 +10,6 @@ int getInterval() {
   
   interval = readFile("/data/interval.txt").toInt();
   LittleFS.end();
-  //Serial.print("Intervalo definido para: "); Serial.println(interval);
   return interval;
 }
 
@@ -41,35 +40,41 @@ void notFound() {
 }
 
 void initAsyncWebServer() {
-
   //E necessário inicializar rede WiFi -> ou seja, deve vir depois de WiFi.begin()
   //Ver server.serveStatic -> SPIFFS
-  server.on("/", HTTP_GET, [](){ //envia o a string html para o client
+  
+  server.on("/", HTTP_GET, [](){
     server.send_P(200, "text/html", index_html); //utilizamos send_P porque os dados estão na memeria flash (PROGMEM)
   });
  
   server.on("/get", HTTP_GET, [](){ //quando o client submitar, nosso action o joga na rota de "/get"
     if (server.hasArg("input1")){
 
+      if(server.hasArg("sendNow")){
+        if(server.arg("sendNow") == "1"){
+          counter = timerControl; //zera o contador de tempo decorrido
+          Serial.println("\nEnviando dados imediatamente e zerando contador...");
+          //requestServer()
+        }
+      }
+
       String response = server.arg("input1");
-      
-      int index = response.indexOf(":");
 
-      int hours = response.substring(0, index).toInt() * 60; // Extrai o valor das horas e converte para minutos
-      int minu = response.substring(index + 1).toInt() + hours; // Extrai o valor dos minutos e soma às horas
-
-      interval = minu * 60 * 1000; // Converte para milissegundos
+      int hours = response.substring(0, 2).toInt() * 60; // Valor das horas -> min
+      int minu = (response.substring(3, 5).toInt() + hours) * 60; // Valor dos min -> sec
+      int sec = response.substring(6, 8).toInt() + minu; // Valor dos sec
+      interval = sec * 1000; // valor dos sec -> mili
 
       setInterval(interval);
       
-      server.send(200, "text/html", get_html);
+      server.send_P(200, "text/html", get_html);
     }
     else {
-      server.send(200, "text/html", "<p>Parâmetro não encontrado</p> <br> <a href=\"/\">Tentar novamente</a>"); //Essa parte me encomoda bastante, mas já é um começo
+      server.send(200, "text/html", "<p>Parâmetro não encontrado</p> <br> <a href=\"/\">Tentar novamente</a>"); //Essa parte me incomoda bastante, mas já é um começo
     }
   });
 
-  //Requisições do HTML
+// REQUISIÇÕES DO HTML
    server.on("/css.css", HTTP_GET, [](){
     server.send_P(200, "text/css", css);
   });
@@ -77,8 +82,9 @@ void initAsyncWebServer() {
   server.on("/script.js", HTTP_GET, [](){
     server.send_P(200, "text/javascript", script_interval);
   });
+//
 
-  //Requisições do Javascript
+// REQUISIÇÕES DO JAVASCRIPT
   server.on("/interval", HTTP_GET, [](){ 
     server.send(200, "text/plain", String(interval));
   });
@@ -90,8 +96,10 @@ void initAsyncWebServer() {
   server.on("/humidity", HTTP_GET, [](){
     server.send(200, "text/plain", String(dht.readHumidity())); 
   });
-  
-  server.onNotFound(notFound); //chama a função que retorna Erro 404
+//
+
+// Chama a função que retorna Erro 404
+  server.onNotFound(notFound); 
   
   server.begin();
 }

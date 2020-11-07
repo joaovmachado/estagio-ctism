@@ -13,32 +13,31 @@ const char index_html[] PROGMEM = R"rawliteral(
 <body>
 
     <h1>Informe o Intervalo de medição</h1>
-
     <header>
         <button>Informar dados</button>
     </header>
 
     <section class="form hide">
-
         <form action="/get">
-            <input type="time" id="time" name="input1" min="00:01" required>         
+            <input type="time" id="time" name="input1" min="00:00:15" step="1" required>         
             <input type="submit" value="Enviar">
+            <input type="checkbox" name="sendNow" id="sendNow" value="1">
+            <label for="sendNow">Enviar dados ao atualizar o intervalo</label>
         </form>
-
     </section>
-        
+
     <p>O intervalo de medição atual é:</p>
-    <span class="ti" id="ShowInterval">
-    </span>
+    <span class="ti" id="ShowInterval"></span>
 
-    
-    <p>Temperatura (°C): </p>
-    <span class="ti" id="temperature">
-    </span>
+    <div class="feedback">    
+        <p>Temperatura (°C): </p>
+        <span class="ti" id="temperature">
+        </span>
 
-    <p>Umidade: </p>
-    <span class="ti" id="humidity">
-    </span>
+        <p>Umidade: </p>
+        <span class="ti" id="humidity">
+        </span>
+    </div>   
 
     <script>
         document
@@ -46,9 +45,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         .addEventListener("click", function(){
         document
         .querySelector('.form')
-        .classList.toggle('hide');
-        });
-
+        .classList.toggle('hide');});
     </script>
     
     <script type="text/javascript" src="script.js"></script>
@@ -82,7 +79,7 @@ const char get_html[] PROGMEM = R"rawliteral(
 </html>)rawliteral";
 
 const char css[] PROGMEM = R"rawliteral(
-    *{
+*{
     margin: 0;
     border: 0;
 }
@@ -123,11 +120,13 @@ form{
     padding: 20px;
     border-radius: 20px;
     display: grid;
-    grid-template-columns: 50% 50%;
+    grid-template-columns: 10% 90%;
     grid-template-areas:
                         "input1 input1"
-                        "button button";
+                        "button button"
+                        "check label";
     gap: 15px;
+    justify-content: center;
     margin-bottom: 40px;
 }
 
@@ -149,11 +148,17 @@ form input[type="submit"]{
     grid-area: button;
 }
 
+form input[type='checkbox']{
+    grid-area: check;
+
+}
+
 form label{
+    grid-area: label;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 20px;
+    background: transparent;
 }
 
 section.form.hide{
@@ -162,13 +167,20 @@ section.form.hide{
     height: 10px;
 }
 
+div.feedback {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
 a{
     text-decoration: none;
     background-color: #F0F0F0;
     color: #7685A8;
     padding: 15px;
     border-radius: 20px;
-} 
+}
 )rawliteral";
 
 const char script_interval[] PROGMEM = R"rawliteral(
@@ -178,18 +190,19 @@ const char script_interval[] PROGMEM = R"rawliteral(
   console.log(interval);
   var hrs = Math.floor(interval / (60 * 60));
   var mins = Math.floor(interval % (60 * 60) / 60);
+  var sec = Math.ceil((interval % (60 * 60)) % 60);
 
   if(hrs < 10) hrs = `0${hrs}`;
   if(mins < 10) mins = `0${mins}`;
+  if(sec < 10) sec = `0${sec}`;
   
-  return `${hrs}:${mins}`;
+  return `${hrs}:${mins}:${sec}`;
 }
 
 var ihttp = new XMLHttpRequest();
 ihttp.onreadystatechange = function(){ //é executada sempre que o status mudar
-                
     if(this.status == 200){
-        document.getElementById("ShowInterval").innerHTML = detectUnit(this.responseText); //exibe a o texto recebido  
+        document.getElementById("ShowInterval").innerHTML = detectUnit(this.responseText);  
     }
 };
 

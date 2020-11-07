@@ -35,9 +35,10 @@ extern const char PROGMEM index_html[]; //String HTML
 extern ESP8266WebServer server;
 extern DNSServer dns;
 
-//Inicia o contador que receberá 
+//Inicia o contador que receberá o valor de millis a cada envio
 //Seu overflow deve ocorrer a cada 50 dias, aproximadamente
 unsigned long counter = 0;
+unsigned long timerControl;
 //Todos essa valores desconsideram um possível atraso na execução do programa
 
 void setup()
@@ -61,9 +62,8 @@ void setup()
 void loop()
 {
   server.handleClient();
-  unsigned long timerControl = millis();
 
-  if ( (unsigned long)timerControl - counter >= interval ) {
+  if ( (timerControl = millis()) - counter >= interval ) {
     //requestServer();
     Serial.println("Enviando Requisição ao servidor");
     Serial.print("Intervalo definido para: "); Serial.println(interval);
