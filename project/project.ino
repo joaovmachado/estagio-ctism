@@ -51,7 +51,15 @@ void setup()
   //WiFi.config(ip, gateway, subnet);
 
   WiFiManager wifiManager;
-  wifiManager.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória
+
+  String ip = "<p style=\"position:bottom\">Último IP registado: " + readFile("/data/ipaddress.txt") + "</p>";
+  wifiManager.setCustomHeadElement(ip.c_str());
+
+  if (WiFi.SSID()!="") wifiManager.setConfigPortalTimeout(60);
+
+  wifiManager.startConfigPortal();
+  
+  //wifiManager.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória
   // wifiManager.startConfigPortal(); // Inicia a página de configuração, sem consultar a memória
   initAsyncWebServer();
   ifStatus();

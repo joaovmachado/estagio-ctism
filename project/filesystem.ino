@@ -33,8 +33,8 @@ String readFile(const char * path) {
   return output;
 }
 
-void writeFile(const char * path, String output) {
-  Serial.printf("Escrevendo %s em %s...", output.c_str(), path);
+void writeFile(const char * path, String input) {
+  Serial.printf("Escrevendo %s em %s...", input.c_str(), path);
 
   File file = LittleFS.open(path, "w");
   if (!file) {
@@ -42,7 +42,7 @@ void writeFile(const char * path, String output) {
     Serial.println("Houve uma falha na tentativa de abrir o arquivo para escrita");
     return;
   }
-  if (file.print(output)) {
+  if (file.print(input)) {
     Serial.println(" [OK]");
   } else {
     Serial.println(" [ERRO]");

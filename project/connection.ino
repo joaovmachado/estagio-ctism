@@ -30,6 +30,8 @@ void ifStatus() //Network Interface Status
 
   Serial.println("Endereço IP: ");
   Serial.println(WiFi.localIP());
+  String ip = WiFi.localIP().toString();
+  writeFile("/data/ipaddress.txt", ip);
 
   long rssi = WiFi.RSSI();
   Serial.println("Intensidade do Sinal (RSSI): " + (String)rssi + " dBm.");
