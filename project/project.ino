@@ -11,8 +11,11 @@
 #define SIGNAL_LED    D5
 
   //Protótipos de funções
-    void initAsyncWebServer();
-    void ifStatus();
+    void initWebServer();
+    void startWiFi();
+    void initWiFiManager();
+    void displayNetworkConfiguration();
+    void saveAPIP();
     void requestServer();
     float convertToLux ( int value );
   //
@@ -21,7 +24,6 @@
 DHT dht(DHT_PIN, DHT_TYPE);
 
 //Configurações da Interface de Rede Wifi
-extern unsigned long interval;
 const char *ssid = "";//Identificador de rede   <-- MODIFICAR DE ACORDO COM A REDE
 const char *passwd = "";//Senha                 <-- ʕ•ᴥ•ʔ
 
@@ -39,6 +41,7 @@ extern DNSServer dns;
 //Seu overflow deve ocorrer a cada 50 dias, aproximadamente
 unsigned long counter = 0;
 unsigned long timerControl;
+extern unsigned long interval;
 //Todos essa valores desconsideram um possível atraso na execução do programa
 
 void setup()
@@ -47,22 +50,10 @@ void setup()
   LittleFS.begin();
   setLedsPinMode(); //Inicializa pinMode dos leds de sinalização como output
 
-  //WiFi.begin(ssid, passwd);
-  //WiFi.config(ip, gateway, subnet);
-
-  WiFiManager wifiManager;
-
-  String ip = "<p style=\"position:bottom\">Último IP registado: " + readFile("/data/ipaddress.txt") + "</p>";
-  wifiManager.setCustomHeadElement(ip.c_str());
-
-  if (WiFi.SSID()!="") wifiManager.setConfigPortalTimeout(60);
-
-  wifiManager.startConfigPortal();
-  
-  //wifiManager.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória
-  // wifiManager.startConfigPortal(); // Inicia a página de configuração, sem consultar a memória
-  initAsyncWebServer();
-  ifStatus();
+  initWiFiManager();
+  initWebServer();
+  displayNetworkConfiguration(); //Exibe SSID, IP e RSSI da rede na comunicacao Serial
+  saveAPIP();
   //dht.begin();
   interval = getInterval();
 }

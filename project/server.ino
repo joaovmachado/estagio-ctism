@@ -39,7 +39,7 @@ void notFound() {
   server.send(404, "text/html", "Not Found");
 }
 
-void initAsyncWebServer() {
+void initWebServer() {
   //E necessário inicializar rede WiFi -> ou seja, deve vir depois de WiFi.begin()
   //Ver server.serveStatic -> SPIFFS
   
@@ -61,9 +61,9 @@ void initAsyncWebServer() {
       String response = server.arg("input1");
 
       int hours = response.substring(0, 2).toInt() * 60; // Valor das horas -> min
-      int minu = (response.substring(3, 5).toInt() + hours) * 60; // Valor dos min -> sec
-      int sec = response.substring(6, 8).toInt() + minu; // Valor dos sec
-      interval = sec * 1000; // valor dos sec -> mili
+      int minutes = (response.substring(3, 5).toInt() + hours) * 60; // Valor dos min -> sec
+      int seconds = response.substring(6, 8).toInt() + minutes; // Valor dos seconds
+      interval = seconds * 1000; // valor dos seconds -> milissegundos
 
       setInterval(interval);
       
@@ -72,6 +72,11 @@ void initAsyncWebServer() {
     else {
       server.send(200, "text/html", "<p>Parâmetro não encontrado</p> <br> <a href=\"/\">Tentar novamente</a>"); //Essa parte me incomoda bastante, mas já é um começo
     }
+  });
+
+  server.on("/restart", HTTP_GET, [](){
+    server.send(204);
+    ESP.restart();
   });
 
 // REQUISIÇÕES DO HTML
