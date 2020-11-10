@@ -1,7 +1,8 @@
 /*
   CONTEÚDO
     startWiFi (inicia conexão WiFi)
-    ifStatus (exibe interface de rede)
+    initWiFiManager (gerencia configuração da rede com WiFiManager)
+    displayNetworkConfiguration (exibe interface de rede: SSID, IP e RSSI da conexão)
     requestServer (prepara requisição ao servidor)
         createRequest (cria pacote de requisição)
 */
@@ -14,7 +15,7 @@ void startWiFi()
     while (true); //Interrompe execução do programa
   }
 
-  Serial.print("Tentando estabelecer comunicação com " + (String)ssid + "\n");
+  Serial.print("Tentando estabelecer comunicação com " + (String)ssid);
   while ( WiFi.status() != WL_CONNECTED ) {
     //Testa conexão com rede WPA/WPA2
     delay(500);
@@ -23,7 +24,25 @@ void startWiFi()
   Serial.println("[OK]\n");
 }
 
-void ifStatus() //Network Interface Status
+void initWiFiManager()
+{
+  //WiFi.begin(ssid, passwd);
+  //WiFi.config(ip, gateway, subnet);
+
+  WiFiManager wifiManager;
+
+  String lastIPSaved = "<p style=\"text-align=center\">Último IP registado: " + readFile("/data/ipaddress.txt") + "</p>";
+  wifiManager.setCustomHeadElement(lastIPSaved.c_str());
+
+  if (WiFi.SSID()!="") wifiManager.setConfigPortalTimeout(60);
+
+  wifiManager.startConfigPortal();
+  
+  //wifiManager.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória
+  // wifiManager.startConfigPortal(); // Inicia a página de configuração, sem consultar a memória
+}
+
+void displayNetworkConfiguration() //Network Interface Status
 {
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());

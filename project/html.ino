@@ -14,7 +14,7 @@ const char index_html[] PROGMEM = R"rawliteral(
 
     <h1>Informe o Intervalo de medição</h1>
     <header>
-        <button>Informar dados</button>
+        <button id='show-setup-btn'>Informar dados</button>
     </header>
 
     <section class="form hide">
@@ -37,22 +37,30 @@ const char index_html[] PROGMEM = R"rawliteral(
         <p>Umidade: </p>
         <span class="ti" id="humidity">
         </span>
-    </div>   
+    </div>
+
+    <button type=button  id='restart-btn'>Reiniciar NodeMCU</button>
 
     <script>
-        document
-        .querySelector('header button')
-        .addEventListener("click", function(){
-        document
-        .querySelector('.form')
-        .classList.toggle('hide');});
+        document.querySelector('header button#show-setup-btn')
+         .addEventListener("click", function(){
+            document.querySelector('.form').classList.toggle('hide');
+        });
+
+        document.querySelector('button#restart-btn').addEventListener('click', function(){
+            var http = new XMLHttpRequest();
+            http.open("GET", "/restart", true);
+            http.send();
+            window.alert("Reiniciado NodeMCU\nO portal de Configuração será inicializado\nEste servidor será encerrado");
+        });
     </script>
     
     <script type="text/javascript" src="script.js"></script>
 
 </body>
 </html>
-</html>)rawliteral";
+</html>
+)rawliteral";
 
 const char get_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
@@ -76,7 +84,8 @@ const char get_html[] PROGMEM = R"rawliteral(
   <script type="text/javascript" src="script.js"></script>
 
 </body>
-</html>)rawliteral";
+</html>
+)rawliteral";
 
 const char css[] PROGMEM = R"rawliteral(
 *{
@@ -181,6 +190,19 @@ a{
     padding: 15px;
     border-radius: 20px;
 }
+
+button#restart-btn {
+    position: absolute;
+    bottom: 50%;
+
+    /* margin-top: 75px; */
+    padding: 13px;
+    background: red;
+    border-radius: 8px;
+    color: white;
+    font: 800 normal 12pt Arial
+}
+
 )rawliteral";
 
 const char script_interval[] PROGMEM = R"rawliteral(
