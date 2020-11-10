@@ -192,10 +192,7 @@ a{
 }
 
 button#restart-btn {
-    position: absolute;
-    bottom: 50%;
-
-    /* margin-top: 75px; */
+    margin-top: 75px;
     padding: 13px;
     background: red;
     border-radius: 8px;
