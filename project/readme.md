@@ -9,4 +9,4 @@
 
 ## Bugs
 
-- [] NodeMCU inicializa no modo AP com o portal de configuração do WiFiManager ativo, quando não deveria
+- [ ] NodeMCU inicializa no modo AP com o portal de configuração do WiFiManager ativo, quando não deveria
