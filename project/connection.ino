@@ -93,9 +93,11 @@ void requestServer()
 
 String createRequest()
 {
-  extern String json;
-  String body = json;
+  //extern String json;
+  //String body = json;
 
+  String body = "{\"Temperatura\": " + (String)dht.readTemperature() + ",\"Umidade\": " + (String)dht.readHumidity() + ",\"SensorID\":\"1234\"}";
+  
   String req;
   req =  "POST " + (String)route + (String)query + " HTTP/1.1\r\n";
   req += "Host: " + (String)host + "\r\n";
