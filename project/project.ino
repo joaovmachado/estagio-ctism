@@ -54,7 +54,7 @@ void setup()
   initWebServer();
   displayNetworkConfiguration(); //Exibe SSID, IP e RSSI da rede na comunicacao Serial
   saveAPIP();
-  //dht.begin();
+  dht.begin();
   interval = getInterval();
 }
 
@@ -63,7 +63,7 @@ void loop()
   server.handleClient();
 
   if ( (timerControl = millis()) - counter >= interval ) {
-    //requestServer();
+    requestServer();
     Serial.println("Enviando Requisição ao servidor");
     Serial.print("Intervalo definido para: "); Serial.println(interval);
     counter = timerControl;
