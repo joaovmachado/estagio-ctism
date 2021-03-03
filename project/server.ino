@@ -101,6 +101,10 @@ void initWebServer() {
   server.on("/humidity", HTTP_GET, [](){
     server.send(200, "text/plain", String(dht.readHumidity())); 
   });
+
+  server.on("/luminosity", HTTP_GET, [](){
+    server.send(200, "text/plain", String( convertToLux(analogRead(LDR_PIN)) )); 
+  });
 //
 
 // Chama a função que retorna Erro 404

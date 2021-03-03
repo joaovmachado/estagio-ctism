@@ -37,6 +37,10 @@ const char index_html[] PROGMEM = R"rawliteral(
         <p>Umidade: </p>
         <span class="ti" id="humidity">
         </span>
+
+        <p>Luminosidade (lux): </p>
+        <span class="ti" id="luminosity">
+        </span>
     </div>
 
     <button type=button  id='restart-btn'>Reiniciar NodeMCU</button>
@@ -255,6 +259,21 @@ setInterval(function(){
     };
 
     http.open("GET", "/humidity", true);
+    http.send();
+
+    }, 1000);
+
+//luminosidade
+setInterval(function(){
+    var http = new XMLHttpRequest();
+
+    http.onreadystatechange = function() {
+      if (this.status == 200) {
+        document.getElementById("luminosity").innerText = this.responseText;
+      }
+    };
+
+    http.open("GET", "/luminosity", true);
     http.send();
 
     }, 1000);
