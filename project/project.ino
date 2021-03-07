@@ -8,7 +8,7 @@
 #define DHT_PIN       2//               <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
 #define DHT_TYPE      DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
 #define LDR_PIN       A0
-#define POWER_LED    D5
+#define POWER_LED     D5
 
   //Protótipos de funções
     void initWebServer();
@@ -41,6 +41,7 @@ extern DNSServer dns;
 //Seu overflow deve ocorrer a cada 50 dias, aproximadamente
 unsigned long counter = 0;
 unsigned long timerControl;
+unsigned int timestamp = 0;
 extern unsigned long interval;
 //Todos essa valores desconsideram um possível atraso na execução do programa
 
@@ -65,9 +66,14 @@ void loop()
   server.handleClient();
 
   if ( (timerControl = millis()) - counter >= interval ) {
-    requestServer();
+    requestServer(); 
     Serial.println("Enviando Requisição ao servidor");
     Serial.print("Intervalo definido para: "); Serial.println(interval);
     counter = timerControl;
+  }
+
+  if ( (millis() - timestamp) >= 1000 ) {
+    led_waiting();
+    timestamp = millis();
   }
 }
