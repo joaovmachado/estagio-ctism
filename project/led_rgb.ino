@@ -3,9 +3,9 @@
 #define BLUE_LED 12
 
 void setLedsPinMode() {
-  pinMode(15, OUTPUT);
-  pinMode(13, OUTPUT);
-  pinMode(12, OUTPUT);
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
+  pinMode(BLUE_LED, OUTPUT);
 }
 
 void led_error(int del, int rep) {

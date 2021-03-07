@@ -8,7 +8,7 @@
 #define DHT_PIN       2//               <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
 #define DHT_TYPE      DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
 #define LDR_PIN       A0
-#define SIGNAL_LED    D5
+#define POWER_LED    D5
 
   //Protótipos de funções
     void initWebServer();
@@ -46,6 +46,8 @@ extern unsigned long interval;
 
 void setup()
 {
+  pinMode(POWER_LED, OUTPUT);
+  digitalWrite(POWER_LED, HIGH); //Liga led sinalizador, indicando que o programa foi iniciado
   Serial.begin(115200);
   LittleFS.begin();
   setLedsPinMode(); //Inicializa pinMode dos leds de sinalização como output

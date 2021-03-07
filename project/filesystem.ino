@@ -19,7 +19,7 @@ String readFile(const char * path) {
 }
 
 void writeFile(const char * path, String input) {
-  Serial.printf("Escrevendo %s em %s...", input.c_str(), path);
+  Serial.printf("\nEscrevendo %s em %s...", input.c_str(), path);
 
   File file = LittleFS.open(path, "w");
   if (!file) {
@@ -38,7 +38,7 @@ void writeFile(const char * path, String input) {
 
 void saveAPIP() {
   String ip = WiFi.localIP().toString();
-  Serial.printf("Salando IP %s", ip.c_str());
+  Serial.printf("Salvando IP %s", ip.c_str());
   if (ip != "(IP unset)")
     writeFile("/data/ipaddress.txt", ip);
   else {
