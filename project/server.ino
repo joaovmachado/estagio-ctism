@@ -54,7 +54,7 @@ void initWebServer() {
         if(server.arg("sendNow") == "1"){
           counter = timerControl; //zera o contador de tempo decorrido
           Serial.println("\nEnviando dados imediatamente e zerando contador...");
-          requestServer()
+          requestServer();
         }
       }
 
