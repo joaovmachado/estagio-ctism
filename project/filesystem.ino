@@ -23,7 +23,8 @@ void writeFile(const char * path, String input) {
 
   File file = LittleFS.open(path, "w");
   if (!file) {
-    led_error(1000, 1);
+    error_status = 3;
+    no_error = false;
     Serial.print(" [FAILED]");
     Serial.println("Houve uma falha na tentativa de abrir o arquivo para escrita");
     return;
@@ -31,7 +32,8 @@ void writeFile(const char * path, String input) {
   if (file.print(input)) {
     Serial.println(" [OK]");
   } else {
-    led_error(1000, 1);
+    error_status = 3;
+    no_error = false;
     Serial.println(" [FAILED]");
   }
   
@@ -44,7 +46,8 @@ void saveAPIP() {
   if (ip != "(IP unset)")
     writeFile("/data/ipaddress.txt", ip);
   else {
-    led_error(1000, 1);
+    error_status = 3;
+    no_error = false;
     Serial.println(" [Failed]");
     return;
   }
@@ -56,7 +59,8 @@ void appendFile(const char * path, const char * message) {
 
   File file = LittleFS.open(path, "a");
   if (!file) {
-    led_error(1000, 1);
+    error_status = 3;
+    no_error = false;
     Serial.println(" [FAILED]");
     Serial.println("   Não foi possível abrir o arquivo");
     return;
@@ -64,7 +68,8 @@ void appendFile(const char * path, const char * message) {
   if (file.print(message)) {
     Serial.println(" [OK]");
   } else {
-    led_error(1000, 1);
+    error_status = 3;
+    no_error = false;
     Serial.println(" [FAILED]");
     Serial.println("   Não foi possível anexar a mesagem ao arquivo");
   }
@@ -76,7 +81,8 @@ void renameFile(const char * originalPath, const char * renamedPath) {
   if (LittleFS.rename(originalPath, renamedPath)) {
     Serial.println(" [OK]");
   } else {
-    led_error(1000, 1);
+    error_status = 3;
+    no_error = false;
     Serial.println(" [FAILED]");
   }
 }
@@ -86,7 +92,8 @@ void deleteFile(const char * path) {
   if (LittleFS.remove(path)) {
     Serial.println(" [OK]");
   } else {
-    led_error(1000, 1);
+    error_status = 3;
+    no_error = false;
     Serial.println(" [FAILED]");
   }
 }

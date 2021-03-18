@@ -18,6 +18,8 @@
     void saveAPIP();
     void requestServer();
     float convertToLux ( int value );
+
+    void setLedsPinMode();
   //
 
 //Configurações de Sensores
@@ -43,6 +45,10 @@ unsigned long counter = 0;
 unsigned long timerControl;
 unsigned int timestamp = 0;
 extern unsigned long interval;
+
+byte error_status;
+bool no_error = true;
+int blink_counter = 0;
 //Todos essa valores desconsideram um possível atraso na execução do programa
 
 void setup()
@@ -69,11 +75,52 @@ void loop()
     requestServer(); 
     Serial.println("Enviando Requisição ao servidor");
     Serial.print("Intervalo definido para: "); Serial.println(interval);
+    
     counter = timerControl;
+
+    if (no_error) error_status = 0;
   }
 
   if ( (millis() - timestamp) >= 1000 ) {
-    led_waiting();
+    Serial.println("blink = " + blink_counter);
+    switch (error_status) {
+      case 255:
+        //pisca azul a cada segundo
+        led_waiting();
+        break;
+      case 0:
+        //pisca verde uma vez
+        led_success();
+        if (++blink_counter == 2) {
+          error_status = 255;
+          blink_counter = 0;
+        }
+        break;
+      case 1: //connection failed (blink 2x)
+        Serial.println("connection failed");
+        led_error();
+        if (++blink_counter == 4) {
+          error_status = 255;
+          blink_counter = 0;
+        }
+        break;
+      case 2: //not retorned 2xx (blink 2x)
+      Serial.println("not retorned 2xx");
+       led_error();
+        if (++blink_counter == 4) {
+          error_status = 255;
+          blink_counter = 0;
+        }
+       break;
+     case 3: //memory read error (blink 3x)
+       Serial.println("memory read error");
+       led_error();
+       if (++blink_counter == 6) {
+          error_status = 255;
+          blink_counter = 0;
+       }
+       break;
+    }
     timestamp = millis();
   }
 }

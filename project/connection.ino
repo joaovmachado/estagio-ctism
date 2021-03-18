@@ -66,36 +66,35 @@ void requestServer()
   if ( client.connect(host, 80) ) {
     Serial.println("[OK]");
     Serial.print("Enviando Requisição... ");
-
-    led_sending_data(); //Liga led
-    
     client.print(requestPkg);
     Serial.println("[OK]");
     Serial.println("\n[Request:]");
     Serial.println(requestPkg);
-
-    led_sending_data(); //Desliga led
   }
   else {
-    led_error(1000, 2);
+    error_status = 1; no_error = false;
     Serial.println("[ERRO]");
     Serial.println("Houve uma falha ao tentar estabelecer conexão com " + (String)host);
   }
 
-  bool is200 = true; //ainda incerto (pode ser false)
+  bool is200 = false;
+  bool isfirst_line = true;
   Serial.println("\n[Response:]");
   while ( client.connected() || client.available() ) {
     if ( client.available() ) {
       String line = client.readStringUntil('\n');
       Serial.println(line);
 
-      if (line.indexOf("2", 9) != -1 && is200 == true) {
+      if (isfirst_line == true && line.indexOf("2", 9) != -1) {
+        is200 = true;
+        isfirst_line = false;
         Serial.print("is200? "); Serial.println(is200);
       }
-      else is200 = false;
     }
   }
-  if (!is200) led_error(1000, 3);
+  if (!is200 && no_error) {
+    error_status = 2; no_error = false;
+  }
 
   if ( !client.connected() ) {
     Serial.print("Encerrando conexão... ");
