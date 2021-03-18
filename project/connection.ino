@@ -82,17 +82,19 @@ void requestServer()
     Serial.println("Houve uma falha ao tentar estabelecer conexão com " + (String)host);
   }
 
-  bool is200 = true; //ainda incerto (pode ser false)
+  bool is200 = false; //ainda incerto (pode ser false)
+  bool isfirst_line = true;
   Serial.println("\n[Response:]");
   while ( client.connected() || client.available() ) {
     if ( client.available() ) {
       String line = client.readStringUntil('\n');
       Serial.println(line);
 
-      if (line.indexOf("2", 9) != -1 && is200 == true) {
+      if (isfirst_line == true && line.indexOf("2", 9) != -1) {
+        is200 = true;
+        isfirst_line = false;
         Serial.print("is200? "); Serial.println(is200);
       }
-      else is200 = false;
     }
   }
   if (!is200) led_error(1000, 3);
