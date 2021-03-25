@@ -87,9 +87,9 @@ void requestServer()
 
       if (isfirst_line == true && line.indexOf("2", 9) != -1) {
         is200 = true;
-        isfirst_line = false;
         Serial.print("is200? "); Serial.println(is200);
       }
+      isfirst_line = false;
     }
   }
   if (!is200 && no_error) {
