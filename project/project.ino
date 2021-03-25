@@ -72,6 +72,8 @@ void loop()
   server.handleClient();
 
   if ( (timerControl = millis()) - counter >= interval ) {
+    no_error = true; //reseta variável
+    turn_off_leds();
     requestServer(); 
     Serial.println("Enviando Requisição ao servidor");
     Serial.print("Intervalo definido para: "); Serial.println(interval);

@@ -79,6 +79,11 @@ void requestServer()
 
   bool is200 = false;
   bool isfirst_line = true;
+  
+  Serial.print("no_error? "); Serial.println(no_error);
+  Serial.print("is_200? "); Serial.println(is200);
+  Serial.print("is_first_line? "); Serial.println(isfirst_line);
+  
   Serial.println("\n[Response:]");
   while ( client.connected() || client.available() ) {
     if ( client.available() ) {
@@ -87,11 +92,13 @@ void requestServer()
 
       if (isfirst_line == true && line.indexOf("2", 9) != -1) {
         is200 = true;
-        Serial.print("is200? "); Serial.println(is200);
       }
+
       isfirst_line = false;
     }
   }
+  Serial.print("is200? "); Serial.println(is200);
+  Serial.print("no_error? "); Serial.println(no_error);
   if (!is200 && no_error) {
     error_status = 2; no_error = false;
   }
