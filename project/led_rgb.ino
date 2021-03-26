@@ -1,6 +1,6 @@
-#define RED_LED 15
-#define GREEN_LED 13
-#define BLUE_LED 12
+#define RED_LED D1
+#define GREEN_LED D2
+#define BLUE_LED D3
 
 void setLedsPinMode() {
   pinMode(RED_LED, OUTPUT);

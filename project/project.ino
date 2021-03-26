@@ -5,7 +5,7 @@
 #include <FS.h>
 #include <LittleFS.h>
 
-#define DHT_PIN       2//               <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
+#define DHT_PIN       D8//             <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
 #define DHT_TYPE      DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
 #define LDR_PIN       A0
 #define POWER_LED     D5
@@ -30,7 +30,7 @@ const char *ssid = "";//Identificador de rede   <-- MODIFICAR DE ACORDO COM A RE
 const char *passwd = "";//Senha                 <-- ʕ•ᴥ•ʔ
 
 // Informações básicas do servidor...
-const char *host =  "megatecnologia.com.br"; //URL servidor
+const char *host =  "www.megatecnologia.com.br"; //URL servidor
 const char *route = "/controle/silas.json";
 const char *query = "?chave=523DA-0D1DD-A84D9-EF34B-F1B31-99AC9-28"; //Chave da aplicação |parâmetro chave|
 
