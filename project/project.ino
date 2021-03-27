@@ -5,7 +5,7 @@
 #include <FS.h>
 #include <LittleFS.h>
 
-#define DHT_PIN       D8//             <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
+#define DHT_PIN       D7//             <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
 #define DHT_TYPE      DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
 #define LDR_PIN       A0
 #define POWER_LED     D5
