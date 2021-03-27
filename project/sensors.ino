@@ -12,7 +12,7 @@
 float convertToLux ( int value )
 {
   float vin = 3.3;
-  float vout = ( value * ( vin / 1024.0 ) );
+  float vout = ( value * ( vin / 1023 ) ); // tensão
   float resLDR = ( 10.0 * ( vin - vout ) ) / vout;
   float lux = 500.0/resLDR;
 
