@@ -12,41 +12,46 @@ const char index_html[] PROGMEM = R"rawliteral(
 </head>
 <body>
 
-    <h1>Informe o Intervalo de medição</h1>
-    <header>
-        <button id='show-setup-btn'>Informar dados</button>
-    </header>
+    <h1>Informe o Intervalo de Medição</h1>
+    <button id='show-setup-btn'>Informar dados</button>
 
     <section class="form hide">
         <form action="/get">
-            <input type="time" id="time" name="input1" min="00:00:15" step="1" required>         
+            <spam id="hms">Horas : Minutos : Segundos</spam>
+            <input type="time" value="00:00:00" id="time" name="input1" min="00:00:15" step="1" required>         
             <input type="submit" value="Enviar">
-            <input type="checkbox" name="sendNow" id="sendNow" value="1">
-            <label for="sendNow">Enviar dados ao atualizar o intervalo</label>
+            <div>
+                <input type="checkbox" name="sendNow" id="sendNow" value="1">
+                <label for="sendNow">Enviar dados ao atualizar o intervalo</label>
+            </div>
         </form>
     </section>
 
+    
     <p>O intervalo de medição atual é:</p>
-    <span class="ti" id="ShowInterval"></span>
+    <span class="ti" id="ShowInterval">03:00:00</span>
 
-    <div class="feedback">    
+    <section id="feedback">
         <p>Temperatura (°C): </p>
         <span class="ti" id="temperature">
+            26
         </span>
 
-        <p>Umidade: </p>
+        <p>Umidade (%): </p>
         <span class="ti" id="humidity">
+            60
         </span>
 
         <p>Luminosidade (lux): </p>
         <span class="ti" id="luminosity">
+            400
         </span>
-    </div>
+    </section>
 
     <button type=button  id='restart-btn'>Reiniciar NodeMCU</button>
 
     <script>
-        document.querySelector('header button#show-setup-btn')
+        document.querySelector('button#show-setup-btn')
          .addEventListener("click", function(){
             document.querySelector('.form').classList.toggle('hide');
         });
@@ -62,7 +67,6 @@ const char index_html[] PROGMEM = R"rawliteral(
     <script type="text/javascript" src="script.js"></script>
 
 </body>
-</html>
 </html>
 )rawliteral";
 
@@ -81,6 +85,7 @@ const char get_html[] PROGMEM = R"rawliteral(
   <p>O intervalo de medição atual é:</p>
 
   <span class="ti" id="ShowInterval">
+    03:00:00
   </span>       
             
   <a href="/">Voltar à página inicial</a>
@@ -104,74 +109,23 @@ body{
     flex-direction: column;
 }
 
-h1, .ti{
+h1{
     color: #52658C;
     font-weight: 700;
     padding: 20px;
     text-align: center;
 }
 
-.ti{
-    font-size: 20pt;
-}
-
-p, header button{
+p, #show-setup-btn{
     font-size: 15pt;
     font-weight: 600;
     color: #7685A8;
 }
 
-header button{
+#show-setup-btn{
     padding: 15px;
     margin-bottom: 30px;
-    border-radius: 20px;
-}
-
-form{
-    border: 2px solid #7685A8;
-    width: 200px;
-    padding: 20px;
-    border-radius: 20px;
-    display: grid;
-    grid-template-columns: 10% 90%;
-    grid-template-areas:
-                        "input1 input1"
-                        "button button"
-                        "check label";
-    gap: 15px;
-    justify-content: center;
-    margin-bottom: 40px;
-}
-
-form *{
-    text-align: center;
-    font-weight: 600;
-    font-size: 12pt;
-    color: #7685A8;
-    background-color: #F0F0F0;
-    border-radius: 20px;
-    height: 50px;
-}
-
-form input[name="input1"]{
-    grid-area: input1;
-}
-
-form input[type="submit"]{
-    grid-area: button;
-}
-
-form input[type='checkbox']{
-    grid-area: check;
-
-}
-
-form label{
-    grid-area: label;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
+    border-radius: 8px;
 }
 
 section.form.hide{
@@ -180,11 +134,79 @@ section.form.hide{
     height: 10px;
 }
 
-div.feedback {
+#feedback{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin-top: 15px;
+}
+
+.ti{
+    font-size: 20pt;
+    color: #52658C;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: 700;
+   
+}
+
+button#restart-btn {
+    margin: 50px;
+    padding: 15px;
+    background: red;
+    border-radius: 8px;
+    color: white;
+    font: 800 normal 12pt Arial;
+}
+
+form{
+    border: 2px solid #7685A8;
+    padding: 20px;
+    border-radius: 8px;
+
+    margin-bottom: 30px;
+}
+
+.form form{
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+form *{
+    width: 90%;
+    font-weight: 600;
+    color: #7685A8;
+    text-align: center;
+}
+
+.form form div{
+    display: flex;
+}
+
+.form form div label{
+    min-width: 80%;
+}
+
+form input[type="submit"], #time{
+    font-size: 12pt;
+    background-color: #F0F0F0;
+    border-radius: 8px;
+    min-height: 50px;
+}
+
+#hms{
+    color: white;
+    background-color: #7685A8;
+    padding: 5px 2px 5px 2px;
+    border-radius: 8px;
+    position: absolute;
+    width: 50%;
+    font-size: 9pt;
+    top: -11px;
 }
 
 a{
@@ -192,22 +214,12 @@ a{
     background-color: #F0F0F0;
     color: #7685A8;
     padding: 15px;
-    border-radius: 20px;
-}
-
-button#restart-btn {
-    margin-top: 75px;
-    padding: 13px;
-    background: red;
     border-radius: 8px;
-    color: white;
-    font: 800 normal 12pt Arial
 }
-
 )rawliteral";
 
 const char script_interval[] PROGMEM = R"rawliteral(
-  function detectUnit(interval){
+function detectUnit(interval){
   interval = parseInt(interval);
   interval = interval / 1000;
   console.log(interval);
@@ -222,60 +234,29 @@ const char script_interval[] PROGMEM = R"rawliteral(
   return `${hrs}:${mins}:${sec}`;
 }
 
-var ihttp = new XMLHttpRequest();
-ihttp.onreadystatechange = function(){ //é executada sempre que o status mudar
-    if(this.status == 200){
-        document.getElementById("ShowInterval").innerHTML = detectUnit(this.responseText);  
+var http = new XMLHttpRequest();
+  http.onreadystatechange = function(){ //é executada sempre que o status mudar
+      if(this.status == 200){
+          document.getElementById("ShowInterval").innerHTML = detectUnit(this.responseText);  
+      }
+  };
+
+  http.open("GET", "/interval", true); //método - url - async
+  http.send();
+
+function sendRequest(variable){
+  http.onreadystatechange = function() {
+    if (this.status == 200) {
+      document.getElementById(variable).innerText = this.responseText;
     }
-};
+  };
+  http.open("GET", "/" + variable, false);
+  http.send();
+}
 
-ihttp.open("GET", "/interval", true); //método - url - async
-ihttp.send();
-
-
-//temperatura
 setInterval(function(){
-    var http = new XMLHttpRequest();
-
-    http.onreadystatechange = function() {
-      if (this.status == 200) {
-        document.getElementById("temperature").innerText = this.responseText;
-      }
-    };
-
-    http.open("GET", "/temperature", true);
-    http.send();
-
-    }, 1000);
-
-//umidade
-setInterval(function(){
-    var http = new XMLHttpRequest();
-
-    http.onreadystatechange = function() {
-      if (this.status == 200) {
-        document.getElementById("humidity").innerText = this.responseText;
-      }
-    };
-
-    http.open("GET", "/humidity", true);
-    http.send();
-
-    }, 1000);
-
-//luminosidade
-setInterval(function(){
-    var http = new XMLHttpRequest();
-
-    http.onreadystatechange = function() {
-      if (this.status == 200) {
-        document.getElementById("luminosity").innerText = this.responseText;
-      }
-    };
-
-    http.open("GET", "/luminosity", true);
-    http.send();
-
-    }, 1000);
-
+    sendRequest("temperature");
+    sendRequest("humidity");
+    sendRequest("luminosity");
+}, 1000);
 )rawliteral";
