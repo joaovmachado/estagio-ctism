@@ -29,22 +29,19 @@ const char index_html[] PROGMEM = R"rawliteral(
 
     
     <p>O intervalo de medição atual é:</p>
-    <span class="ti" id="ShowInterval">03:00:00</span>
+    <span class="ti" id="ShowInterval"></span>
 
     <section id="feedback">
         <p>Temperatura (°C): </p>
         <span class="ti" id="temperature">
-            26
         </span>
 
         <p>Umidade (%): </p>
         <span class="ti" id="humidity">
-            60
         </span>
 
         <p>Luminosidade (lux): </p>
         <span class="ti" id="luminosity">
-            400
         </span>
     </section>
 
@@ -57,15 +54,15 @@ const char index_html[] PROGMEM = R"rawliteral(
         });
 
         document.querySelector('button#restart-btn').addEventListener('click', function(){
-            var http = new XMLHttpRequest();
-            http.open("GET", "/restart", true);
-            http.send();
-            window.alert("Reiniciado NodeMCU\nO portal de Configuração será inicializado\nEste servidor será encerrado");
+            if (!window.confirm("Esta opção irá reiniciar o NodeMCU e todo o seu servidor será resetado.\nTem certeza que deseja continuar?")){
+                var http = new XMLHttpRequest();
+                http.open("GET", "/restart", true);
+                http.send();
+            }
         });
     </script>
     
     <script type="text/javascript" src="script.js"></script>
-
 </body>
 </html>
 )rawliteral";
@@ -79,13 +76,11 @@ const char get_html[] PROGMEM = R"rawliteral(
     <link href="css.css" rel="stylesheet">
 </head>
 <body>
-
   <h1>Novo intervalo de tempo definido</h1>
 
   <p>O intervalo de medição atual é:</p>
 
   <span class="ti" id="ShowInterval">
-    03:00:00
   </span>       
             
   <a href="/">Voltar à página inicial</a>
@@ -237,7 +232,7 @@ function detectUnit(interval){
 var http = new XMLHttpRequest();
   http.onreadystatechange = function(){ //é executada sempre que o status mudar
       if(this.status == 200){
-          document.getElementById("ShowInterval").innerHTML = detectUnit(this.responseText);  
+          document.getElementById("ShowInterval").innerHTML = detectUnit(this.responseText);
       }
   };
 
