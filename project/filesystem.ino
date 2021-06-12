@@ -1,27 +1,31 @@
-String readFile(const char * path) {
-  Serial.printf("Lendo %s", path);
+String
+readFile(const char * path) {
+  Serial.printf("Lendo %s\n", path);
 
   File file = LittleFS.open(path, "r");
   if (!file) {
     Serial.println(" [FAILED]");
     Serial.println("Houve uma falha na tentativa de ler o arquivo");
-    return "15000";
+    return "failed";
   }
   
   String output;
   while (file.available()) {
     output = file.readStringUntil('\n');
+    Serial.println(output);
   }
   Serial.println(" [OK]");
-  Serial.println("   ..." + output);
+
   file.close();
   return output;
 }
 
-void writeFile(const char * path, String input) {
+
+void
+writeFile(const char * path, String input) {
   Serial.printf("\nEscrevendo %s em %s...", input.c_str(), path);
 
-  File file = LittleFS.open(path, "w");
+  File file = LittleFS.open(path, "w"); //abre o caminho do arquivo no modo escrita
   if (!file) {
     error_status = 3;
     no_error = false;
@@ -40,21 +44,9 @@ void writeFile(const char * path, String input) {
   file.close();
 }
 
-void saveAPIP() {
-  String ip = WiFi.localIP().toString();
-  Serial.printf("Salvando IP %s", ip.c_str());
-  if (ip != "(IP unset)")
-    writeFile("/data/ipaddress.txt", ip);
-  else {
-    error_status = 3;
-    no_error = false;
-    Serial.println(" [Failed]");
-    return;
-  }
-  Serial.println(" [OK]");
-}
 
-void appendFile(const char * path, const char * message) {
+void
+appendFile(const char * path, String message) {
   Serial.printf("Anexando ao arquivo: %s", path);
 
   File file = LittleFS.open(path, "a");
@@ -75,6 +67,22 @@ void appendFile(const char * path, const char * message) {
   }
   file.close();
 }
+
+
+void saveAPIP() {
+  String ip = WiFi.localIP().toString();
+  Serial.printf("Salvando IP %s", ip.c_str());
+  if (ip != "(IP unset)")
+    writeFile("/data/ipaddress.txt", ip);
+  else {
+    error_status = 3;
+    no_error = false;
+    Serial.println(" [Failed]");
+    return;
+  }
+  Serial.println(" [OK]");
+}
+
 
 void renameFile(const char * originalPath, const char * renamedPath) {
   Serial.printf("Renomeando o arquivo %s para %s", originalPath, renamedPath);

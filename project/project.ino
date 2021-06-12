@@ -3,7 +3,7 @@
 #include <WiFiManager.h>
 #include <DHT.h>
 #include <FS.h>
-#include <LittleFS.h>
+#include <LittleFS.h>  //https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
 
 #define DHT_PIN       D7//             <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
 #define DHT_TYPE      DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
@@ -16,6 +16,7 @@
     void initWiFiManager();
     void displayNetworkConfiguration();
     void saveAPIP();
+    void appendFile(const char * path, const char * message); // Anexa uma String em um arquivo
     void requestServer();
     float convertToLux ( int value );
 
@@ -74,8 +75,19 @@ void loop()
   if ( (timerControl = millis()) - counter >= interval ) {
     no_error = true; //reseta variável
     turn_off_leds();
-    requestServer(); 
-    Serial.println("Enviando Requisição ao servidor");
+    //        requestServer();  REQUISÇÃO AO SERVIDOR DESATIVADA
+    //        Serial.println("Enviando Requisição ao servidor");
+
+    Serial.println("\nIniciando LittleFS...");
+     if (!LittleFS.begin()) {
+     Serial.println(" [ERRO]");
+    }
+
+    appendFile("/data.txt", (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "\n");
+    readFile("/data.txt");
+
+    LittleFS.end();
+    
     Serial.print("Intervalo definido para: "); Serial.println(interval);
     
     counter = timerControl;

@@ -1,27 +1,39 @@
 unsigned long interval = 15000;
 
-int getInterval() {
+
+int
+getInterval() {
 
   Serial.println("\nIniciando LittleFS...");
   if (!LittleFS.begin()) {
     Serial.println(" [ERRO]");
     return 15000;
   }
+
+  String hold_interval_mstring = readFile("/data/interval.txt"); //valor salvo na memória que define o intervalo
+
+  //Tratamento de exceção caso o valor lido na memória retorne um erro
+  if (hold_interval_mstring != "failed") {
+    interval = hold_interval_mstring.toInt();
   
-  interval = readFile("/data/interval.txt").toInt();
   LittleFS.end();
   return interval;
+  }
 }
 
-void setInterval( int value ) {
+
+void
+setInterval( int set_value ) {
+  
   Serial.println("\nIniciando LittleFS...");
+  
   if (!LittleFS.begin()) {
     Serial.println(" [ERRO]");
-    Serial.println("\t O valor de interval não foi alterado");
+    Serial.println("\t O valor de $interval não foi alterado");
     return;
   }
 
-  writeFile("/data/interval.txt", (String)value); //Escreve o intervalo obtido na memoria
+  writeFile("/data/interval.txt", (String)set_value); //Escreve o intervalo obtido na memoria
 }
 
 
@@ -46,6 +58,14 @@ void initWebServer() {
   server.on("/", HTTP_GET, [](){
     server.send_P(200, "text/html", index_html); //utilizamos send_P porque os dados estão na memeria flash (PROGMEM)
   });
+
+  server.on("/data", HTTP_GET, [](){
+
+    LittleFS.begin();
+    File file = LittleFS.open("/data.txt", "r");
+    server.streamFile(file, "text/plain");
+    file.close();
+    });
  
   server.on("/get", HTTP_GET, [](){ //quando o client submitar, nosso action o joga na rota de "/get"
     if (server.hasArg("input1")){
@@ -58,14 +78,14 @@ void initWebServer() {
         }
       }
 
-      String response = server.arg("input1");
+      String response = server.arg("input1"); //input1 = input do intervalo
 
       int hours = response.substring(0, 2).toInt() * 60; // Valor das horas -> min
       int minutes = (response.substring(3, 5).toInt() + hours) * 60; // Valor dos min -> sec
       int seconds = response.substring(6, 8).toInt() + minutes; // Valor dos seconds
-      interval = seconds * 1000; // valor dos seconds -> milissegundos
+      interval = seconds * 1000; // valor dos seconds -> milissegundos, a leitura do intervalo é totalmente convertida em milissegundos
 
-      setInterval(interval);
+      setInterval(interval); //Função que armazena o intervalo na memória flash do esp8266, não confundir com a função setInterval definida no JavaScript da página
       
       server.send_P(200, "text/html", get_html);
     }
