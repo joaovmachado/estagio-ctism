@@ -54,7 +54,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         });
 
         document.querySelector('button#restart-btn').addEventListener('click', function(){
-            if (!window.confirm("Esta opção irá reiniciar o NodeMCU e todo o seu servidor será resetado.\nTem certeza que deseja continuar?")){
+            if (window.confirm("Esta opção irá reiniciar o NodeMCU e todo o seu servidor será resetado.\nTem certeza que deseja continuar?")){
                 var http = new XMLHttpRequest();
                 http.open("GET", "/restart", true);
                 http.send();
