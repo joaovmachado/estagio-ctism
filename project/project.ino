@@ -84,7 +84,7 @@ void loop()
   }
 
   if ( (millis() - timestamp) >= 1000 ) {
-    Serial.println("blink = " + (String)blink_counter);
+    //Serial.println("blink = " + (String)blink_counter);
     switch (error_status) {
       case 255:
         //pisca azul a cada segundo

@@ -34,7 +34,7 @@ void initWiFiManager()
   String lastIPSaved = "<p style=\"text-align=center\">Último IP registado: " + readFile("/data/ipaddress.txt") + "</p>";
   wifiManager.setCustomHeadElement(lastIPSaved.c_str());
 
-  if (WiFi.SSID()!="") wifiManager.setConfigPortalTimeout(60); // Verifica se há um SSID salvo, caso contrário não define o timeout
+  if (WiFi.SSID()!="") wifiManager.setConfigPortalTimeout(20); // Verifica se há um SSID salvo, caso contrário não define o timeout
 
   wifiManager.startConfigPortal();  // Inicia a página de configuração, sem consultar a memória
   

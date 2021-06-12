@@ -9,21 +9,21 @@ void setLedsPinMode() {
 }
 
 void led_error() {
-  Serial.println("[Led_ERROR] " + (String)(digitalRead(RED_LED)) + " -> " + (String)(!digitalRead(RED_LED)));
+  //Serial.println("[Led_ERROR] " + (String)(digitalRead(RED_LED)) + " -> " + (String)(!digitalRead(RED_LED)));
   digitalWrite(RED_LED, (!digitalRead(RED_LED)));
   digitalWrite(BLUE_LED, LOW);
   digitalWrite(GREEN_LED, LOW);
 }
 
 void led_waiting() {
-  Serial.println("[Led_WAITING] " + (String)(digitalRead(BLUE_LED)) + " -> " + (String)(!digitalRead(BLUE_LED)));
+  //Serial.println("[Led_WAITING] " + (String)(digitalRead(BLUE_LED)) + " -> " + (String)(!digitalRead(BLUE_LED)));
   digitalWrite(BLUE_LED, (!digitalRead(BLUE_LED)));
   digitalWrite(RED_LED, LOW);
   digitalWrite(GREEN_LED, LOW);
 }
 
 void led_success() {
-   Serial.println("[Led_SUCCESS] " + (String)(digitalRead(GREEN_LED)) + " -> " + (String)(!digitalRead(GREEN_LED)));
+   //Serial.println("[Led_SUCCESS] " + (String)(digitalRead(GREEN_LED)) + " -> " + (String)(!digitalRead(GREEN_LED)));
    digitalWrite(GREEN_LED, (!digitalRead(GREEN_LED)));
    digitalWrite(RED_LED, LOW);
    digitalWrite(BLUE_LED, LOW);
