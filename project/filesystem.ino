@@ -1,5 +1,4 @@
-String
-readFile(const char * path) {
+String readFile(const char * path) {
   Serial.printf("Lendo %s\n", path);
 
   File file = LittleFS.open(path, "r");
@@ -21,8 +20,7 @@ readFile(const char * path) {
 }
 
 
-void
-writeFile(const char * path, String input) {
+void writeFile(const char * path, String input) {
   Serial.printf("\nEscrevendo %s em %s...", input.c_str(), path);
 
   File file = LittleFS.open(path, "w"); //abre o caminho do arquivo no modo escrita
@@ -45,8 +43,7 @@ writeFile(const char * path, String input) {
 }
 
 
-void
-appendFile(const char * path, String message) {
+void appendFile(const char * path, String message) {
   Serial.printf("Anexando ao arquivo: %s", path);
 
   File file = LittleFS.open(path, "a");

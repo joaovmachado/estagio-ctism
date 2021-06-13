@@ -13,16 +13,31 @@
 #define POWER_LED     D5
 
   //Protótipos de funções
-    void initWebServer();
-    void startWiFi();
-    void initWiFiManager();
-    void displayNetworkConfiguration();
-    void saveAPIP();
-    void appendFile(const char * path, const char * message); // Anexa uma String em um arquivo
-    void requestServer();
-    float convertToLux ( int value );
+    //connection.io
+    void initWiFiManager( void );
+    void displayNetworkConfiguration( void );
+    void requestServer( void );
+    String createRequest( void );
 
-    void setLedsPinMode();
+    //filesystem.io
+    String readFile(const char * path);
+    void writeFile(const char * path, String input);
+    void appendFile(const char * path, String message); // Anexa uma String em um arquivo
+    void saveAPIP( void );
+    
+    //led_rgb.io
+    void setLedsPinMode( void );
+    void led_error( void );
+    void led_waiting( void );
+    void led_success( void );
+    void turn_off_leds( void );
+    //sensors.io
+    float convertToLux (int value);
+
+    //server.io
+    void initWebServer( void );
+    int getInterval( void );
+    void setInterval(int set_value);
   //
 
 //Configurações de Sensores

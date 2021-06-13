@@ -1,12 +1,4 @@
-/*
-  CONTEÚDO
-    startWiFi (inicia conexão WiFi)
-    initWiFiManager (gerencia configuração da rede com WiFiManager)
-    displayNetworkConfiguration (exibe interface de rede: SSID, IP e RSSI da conexão)
-    requestServer (prepara requisição ao servidor)
-        createRequest (cria pacote de requisição)
-*/
-
+/* Função que inicia conexão WiFi através das variáveis de configuração da rede
 void startWiFi()
 {
   if ( WiFi.status() == WL_NO_SHIELD ) {
@@ -23,7 +15,9 @@ void startWiFi()
   }
   Serial.println("[OK]\n");
 }
+*/
 
+// Função que gerencia configuração da rede com WiFiManager
 void initWiFiManager()
 {
   //WiFi.begin(ssid, passwd);
@@ -41,6 +35,8 @@ void initWiFiManager()
   //wifiManager.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória
 }
 
+
+// Função que retorna os dados de configuração da rede para a Serial, exibe a interface de rede: SSID, IP e RSSI da conexão
 void displayNetworkConfiguration() //Network Interface Status
 {
   Serial.print("SSID: ");
@@ -53,7 +49,9 @@ void displayNetworkConfiguration() //Network Interface Status
   Serial.println("Intensidade do Sinal (RSSI): " + (String)rssi + " dBm.");
 }
 
+
 void requestServer()
+// Envia uma requisição para o servidor pré-definido
 {
   WiFiClient client;
 
@@ -109,7 +107,10 @@ void requestServer()
   }
 }
 
+
+
 String createRequest()
+// Retorna uma String contendo uma requisição HTTP POST contendo um JSON no corpo do pacote
 {
   //extern String json;
   //String body = json;

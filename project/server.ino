@@ -1,8 +1,7 @@
 unsigned long interval = 15000;
 
 
-int
-getInterval() {
+int getInterval() {
 
   Serial.println("\nIniciando LittleFS...");
   if (!LittleFS.begin()) {
@@ -22,8 +21,7 @@ getInterval() {
 }
 
 
-void
-setInterval( int set_value ) {
+void setInterval( int set_value ) {
   
   Serial.println("\nIniciando LittleFS...");
   
