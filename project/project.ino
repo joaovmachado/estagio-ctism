@@ -4,6 +4,8 @@
 #include <DHT.h>
 #include <FS.h>
 #include <LittleFS.h>  //https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 
 #define DHT_PIN       D7//             <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
 #define DHT_TYPE      DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
@@ -52,18 +54,23 @@ bool no_error = true;
 int blink_counter = 0;
 //Todos essa valores desconsideram um possível atraso na execução do programa
 
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org");
+
 void setup()
 {
   pinMode(POWER_LED, OUTPUT);
   digitalWrite(POWER_LED, HIGH); //Liga led sinalizador, indicando que o programa foi iniciado
-  Serial.begin(115200);
   LittleFS.begin();
+  Serial.begin(115200);  
   setLedsPinMode(); //Inicializa pinMode dos leds de sinalização como output
-
   initWiFiManager();
   initWebServer();
   displayNetworkConfiguration(); //Exibe SSID, IP e RSSI da rede na comunicacao Serial
   saveAPIP();
+
+  timeClient.begin();
+  
   dht.begin();
   interval = getInterval();
 }
@@ -83,7 +90,8 @@ void loop()
      Serial.println(" [ERRO]");
     }
 
-    appendFile("/data.txt", (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "\n");
+    timeClient.update();
+    appendFile("/data.txt", (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + timeClient.getFormattedTime() + "\n");
     readFile("/data.txt");
 
     LittleFS.end();
