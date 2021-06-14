@@ -76,7 +76,10 @@ void setup()
 {
   pinMode(POWER_LED, OUTPUT);
   digitalWrite(POWER_LED, HIGH); //Liga led sinalizador, indicando que o programa foi iniciado
-  LittleFS.begin();
+  Serial.println("\nIniciando LittleFS...");
+     if (!LittleFS.begin()) {
+     Serial.println(" [ERRO]");
+  }
   Serial.begin(115200);  
   setLedsPinMode(); //Inicializa pinMode dos leds de sinalização como output
   initWiFiManager();
@@ -100,16 +103,9 @@ void loop()
     //        requestServer();  REQUISÇÃO AO SERVIDOR DESATIVADA
     //        Serial.println("Enviando Requisição ao servidor");
 
-    Serial.println("\nIniciando LittleFS...");
-     if (!LittleFS.begin()) {
-     Serial.println(" [ERRO]");
-    }
-
     timeClient.update();
-    appendFile("/data.txt", (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + timeClient.getFormattedTime() + "\n");
-    readFile("/data.txt");
-
-    LittleFS.end();
+    appendFile("/data.csv", (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + timeClient.getFormattedTime() + "\n");
+    readFile("/data.csv");
     
     Serial.print("Intervalo definido para: "); Serial.println(interval);
     

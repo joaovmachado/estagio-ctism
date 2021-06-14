@@ -3,34 +3,22 @@ unsigned long interval = 15000;
 
 int getInterval() {
 
-  Serial.println("\nIniciando LittleFS...");
-  if (!LittleFS.begin()) {
-    Serial.println(" [ERRO]");
-    return 15000;
-  }
-
   String hold_interval_mstring = readFile("/data/interval.txt"); //valor salvo na memória que define o intervalo
 
   //Tratamento de exceção caso o valor lido na memória retorne um erro
   if (hold_interval_mstring != "failed") {
     interval = hold_interval_mstring.toInt();
-  
-  LittleFS.end();
-  return interval;
   }
+  else if (!LittleFS.exists("/data/interval.txt")) {
+      Serial.println("Não foi encontrado o arquivo /data/interval.txt, definindo intervalo para 20 segundos. [Forçado]");
+      writeFile("/data/interval.txt", "20000");
+      interval = 20000;
+  }
+  return interval;
 }
 
 
 void setInterval( int set_value ) {
-  
-  Serial.println("\nIniciando LittleFS...");
-  
-  if (!LittleFS.begin()) {
-    Serial.println(" [ERRO]");
-    Serial.println("\t O valor de $interval não foi alterado");
-    return;
-  }
-
   writeFile("/data/interval.txt", (String)set_value); //Escreve o intervalo obtido na memoria
 }
 
@@ -59,9 +47,8 @@ void initWebServer() {
 
   server.on("/data", HTTP_GET, [](){
 
-    LittleFS.begin();
-    File file = LittleFS.open("/data.txt", "r");
-    server.streamFile(file, "text/plain");
+    File file = LittleFS.open("/data.csv", "r");
+    server.streamFile(file, "text/csv");
     file.close();
     });
  
