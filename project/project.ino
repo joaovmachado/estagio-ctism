@@ -38,6 +38,8 @@
     void initWebServer( void );
     int getInterval( void );
     void setInterval(int set_value);
+
+    String getFormattedDate ( void );
   //
 
 //Configurações de Sensores
@@ -70,8 +72,8 @@ int blink_counter = 0;
 //Todos essa valores desconsideram um possível atraso na execução do programa
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "pool.ntp.org");
-
+NTPClient ntpClient(ntpUDP, "pool.ntp.org",  -3 * 3600);
+  
 void setup()
 {
   pinMode(POWER_LED, OUTPUT);
@@ -87,7 +89,7 @@ void setup()
   displayNetworkConfiguration(); //Exibe SSID, IP e RSSI da rede na comunicacao Serial
   saveAPIP();
 
-  timeClient.begin();
+  ntpClient.begin();
   
   dht.begin();
   interval = getInterval();
@@ -103,8 +105,8 @@ void loop()
     //        requestServer();  REQUISÇÃO AO SERVIDOR DESATIVADA
     //        Serial.println("Enviando Requisição ao servidor");
 
-    timeClient.update();
-    appendFile("/data.csv", (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + timeClient.getFormattedTime() + "\n");
+    ntpClient.update();
+    appendFile("/data.csv", (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + ntpClient.getFormattedTime() + " " + getFormattedDate() + "\n");
     readFile("/data.csv");
     
     Serial.print("Intervalo definido para: "); Serial.println(interval);
@@ -156,4 +158,20 @@ void loop()
     }
     timestamp = millis();
   }
+}
+
+
+String getFormattedDate ( void ) {
+  unsigned long epochTime = ntpClient.getEpochTime();
+  struct tm *ptm = gmtime ((time_t *)&epochTime); 
+ 
+  int monthDay = ptm->tm_mday;
+ 
+  int currentMonth = ptm->tm_mon + 1;
+ 
+  int currentYear = ptm->tm_year + 1900;
+  
+  //Print complete date:
+  String currentDate = String(monthDay) + "-" + String(currentMonth) + "-" + String(currentYear);
+  return currentDate;
 }
