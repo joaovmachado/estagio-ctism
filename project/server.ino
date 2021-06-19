@@ -84,6 +84,14 @@ void initWebServer() {
     ESP.restart();
   });
 
+  server.on("/delete-sensors-data", HTTP_GET, [](){
+    if (server.arg("trigger") == "true"){
+      deleteFile("/data.csv");  
+    }
+    server.sendHeader("Location", "/", true); // Redireciona para a homepage
+    server.send(302); 
+  });
+
 // REQUISIÇÕES DO HTML
    server.on("/css.css", HTTP_GET, [](){
     server.send_P(200, "text/css", css);

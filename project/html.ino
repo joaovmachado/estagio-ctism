@@ -45,7 +45,9 @@ const char index_html[] PROGMEM = R"rawliteral(
         </span>
     </section>
 
-    <button type=button  id='restart-btn'>Reiniciar NodeMCU</button>
+    <button type=button id="restart-btn">Reiniciar NodeMCU</button>
+    <a href="/data">Baixar dados dos sensores</a>
+    <button type=button id="delete-sensors-data">Excluir dados dos sensores</button>
 
     <script>
         document.querySelector('button#show-setup-btn')
@@ -54,13 +56,21 @@ const char index_html[] PROGMEM = R"rawliteral(
         });
 
         document.querySelector('button#restart-btn').addEventListener('click', function(){
-            if (window.confirm("Esta opção irá reiniciar o NodeMCU e todo o seu servidor será resetado.\nTem certeza que deseja continuar?")){
+            if (window.confirm("Esta opção irá reiniciar o NodeMCU e todo o seu servidor será resetado.\nTem certeza de que deseja continuar?")){
                 var http = new XMLHttpRequest();
                 http.open("GET", "/restart", true);
                 http.send();
             }
         });
-    </script>
+
+        document.querySelector('button#delete-sensors-data').addEventListener('click', function(){
+            if (window.confirm("Esta opção irá excluir todos os dados obtidos pelos sensores que foram guardados na memória do NodeMCU.\nTem certeza de que deseja continuar?")){
+                var http = new XMLHttpRequest();
+                http.open("GET", "/delete-sensors-data?trigger=true", true);
+                http.send();
+            }
+        });
+    </script>`
     
     <script type="text/javascript" src="script.js"></script>
 </body>
@@ -150,6 +160,15 @@ button#restart-btn {
     margin: 50px;
     padding: 15px;
     background: red;
+    border-radius: 8px;
+    color: white;
+    font: 800 normal 12pt Arial;
+}
+
+button#delete-sensors-data {
+    margin: 50px;
+    padding: 15px;
+    background: #52658c;
     border-radius: 8px;
     color: white;
     font: 800 normal 12pt Arial;
