@@ -1,53 +1,11 @@
-#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
-#include <WiFiManager.h>
-#include <DHT.h>
-#include <FS.h>
-#include <LittleFS.h>  //https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
-#include <NTPClient.h>
-#include <WiFiUdp.h>
-
-#define DHT_PIN       D7//             <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
-#define DHT_TYPE      DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
-#define LDR_PIN       A0
-#define POWER_LED     D5
-
-  //Protótipos de funções
-    //connection.io
-    void initWiFiManager( void );
-    void displayNetworkConfiguration( void );
-    void requestServer( void );
-    String createRequest( void );
-
-    //filesystem.io
-    String readFile(const char * path);
-    void writeFile(const char * path, String input);
-    void appendFile(const char * path, String message); // Anexa uma String em um arquivo
-    void saveAPIP( void );
-    
-    //led_rgb.io
-    void setLedsPinMode( void );
-    void led_error( void );
-    void led_waiting( void );
-    void led_success( void );
-    void turn_off_leds( void );
-    //sensors.io
-    float convertToLux (int value);
-
-    //server.io
-    void initWebServer( void );
-    int getInterval( void );
-    void setInterval(int set_value);
-
-    String getFormattedDate ( void );
-  //
+#include "project_header.h"
 
 //Configurações de Sensores
 DHT dht(DHT_PIN, DHT_TYPE);
 
 //Configurações da Interface de Rede Wifi
-const char *ssid = "";//Identificador de rede   <-- MODIFICAR DE ACORDO COM A REDE
-const char *passwd = "";//Senha                 <-- ʕ•ᴥ•ʔ
+//const char *ssid = "";//Identificador de rede   <-- MODIFICAR DE ACORDO COM A REDE
+//const char *passwd = "";//Senha                 <-- ʕ•ᴥ•ʔ
 
 // Informações básicas do servidor...
 const char *host =  "www.megatecnologia.com.br"; //URL servidor
@@ -70,6 +28,11 @@ byte error_status;
 bool no_error = true;
 int blink_counter = 0;
 //Todos essa valores desconsideram um possível atraso na execução do programa
+
+// Arquivos de armazenamento de dados
+const char * sensors_data_path = "/data.csv";
+const char * interval_file_path = "/data/interval.txt";
+
 
 WiFiUDP ntpUDP;
 NTPClient ntpClient(ntpUDP, "pool.ntp.org",  -3 * 3600);
@@ -106,8 +69,8 @@ void loop()
     //        Serial.println("Enviando Requisição ao servidor");
 
     ntpClient.update();
-    appendFile("/data.csv", (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + ntpClient.getFormattedTime() + " " + getFormattedDate() + "\n");
-    readFile("/data.csv");
+    appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + ntpClient.getFormattedTime() + " " + getFormattedDate() + "\n");
+    readFile(sensors_data_path);
     
     Serial.print("Intervalo definido para: "); Serial.println(interval);
     
