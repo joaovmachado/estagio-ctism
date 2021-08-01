@@ -28,10 +28,21 @@ void initWiFiManager()
   String lastIPSaved = "<p style=\"text-align=center\">Último IP registado: " + readFile("/data/ipaddress.txt") + "</p>";
   wifiManager.setCustomHeadElement(lastIPSaved.c_str());
 
-  if (WiFi.SSID()!="") wifiManager.setConfigPortalTimeout(20); // Verifica se há um SSID salvo, caso contrário não define o timeout
+  // id/name, placeholder/prompt, default, length
+  WiFiManagerParameter custom_time_parameter("customTimeParameter", "Hora atual (Formato: HH:MM:SS) ", "Nenhum valor informado", 65);
+  WiFiManagerParameter custom_date_parameter("customDateParameter", "Data atual (Formato: dd/mm/aaaa) ", "Nenhum valor informado", 65);
+  wifiManager.addParameter(&custom_time_parameter);
+  wifiManager.addParameter(&custom_date_parameter);
+
+  strcpy(custom_time, custom_time_parameter.getValue());
+  strcpy(custom_date, custom_date_parameter.getValue());
+
+  //wifiManager.setCustomHeadElement("<p style=\"text-align=center\"><a href='/'>Baixar dados dos sensores</a></p>");
+
+  if (WiFi.SSID() != "") wifiManager.setConfigPortalTimeout(20); // Verifica se há um SSID salvo, caso contrário não define o timeout
 
   wifiManager.startConfigPortal();  // Inicia a página de configuração, sem consultar a memória
-  
+
   //wifiManager.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória
 }
 
@@ -76,11 +87,11 @@ void requestServer()
 
   bool is200 = false;
   bool isfirst_line = true;
-  
+
   Serial.print("no_error? "); Serial.println(no_error);
   Serial.print("is_200? "); Serial.println(is200);
   Serial.print("is_first_line? "); Serial.println(isfirst_line);
-  
+
   Serial.println("\n[Response:]");
   while ( client.connected() || client.available() ) {
     if ( client.available() ) {
@@ -116,7 +127,7 @@ String createRequest()
   //String body = json;
 
   String body = "{\"Temperatura\": " + (String)dht.readTemperature() + ",\"Umidade\": " + (String)dht.readHumidity() + ",\"SensorID\":\"1234\"}";
-  
+
   String req;
   req =  "POST " + (String)route + (String)query + " HTTP/1.1\r\n";
   req += "Host: " + (String)host + "\r\n";

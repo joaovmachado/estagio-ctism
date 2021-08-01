@@ -21,18 +21,20 @@ extern DNSServer dns;
 //Seu overflow deve ocorrer a cada 50 dias, aproximadamente
 unsigned long counter = 0;
 unsigned long timerControl;
-unsigned int timestamp = 0;
+unsigned int interval_timestamp = 0;
 extern unsigned long interval;
 
 byte error_status;
 bool no_error = true;
 int blink_counter = 0;
 //Todos essa valores desconsideram um possível atraso na execução do programa
-
 // Arquivos de armazenamento de dados
-const char * sensors_data_path = "/data.csv";
+const char * sensors_data_path = "/data/data.csv";
 const char * interval_file_path = "/data/interval.txt";
+const char * last_ntp_timestamp_path = "/time/timestamp.txt"; // NAO UTILIZADO
 
+char custom_time[65]; // Parâmetros customizados no Portal de Configuração
+char custom_date[65];
 
 WiFiUDP ntpUDP;
 NTPClient ntpClient(ntpUDP, "pool.ntp.org",  -3 * 3600);
@@ -56,6 +58,8 @@ void setup()
   
   dht.begin();
   interval = getInterval();
+
+  ntpClient.forceUpdate();
 }
 
 void loop()
@@ -68,7 +72,15 @@ void loop()
     //        requestServer();  REQUISÇÃO AO SERVIDOR DESATIVADA
     //        Serial.println("Enviando Requisição ao servidor");
 
-    ntpClient.update();
+                                                                      // CASO NÃO HAJA INTERNERT, NÂO HAVERÁ ACESSO AO SERVIDOR NTP
+    if (!ntpClient.isTimeSet()) {  // Se o tempo não for definido
+      Serial.println("O tempo não foi definido");
+      Serial.print("Tempo definido salvo na memória: "); // O tempo salvo na memória deverá ser usado
+      Serial.println(custom_time);
+      Serial.print("Data definida na memória: ");
+      Serial.println(custom_date);
+    }
+    
     appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + ntpClient.getFormattedTime() + " " + getFormattedDate() + "\n");
     readFile(sensors_data_path);
     
@@ -79,7 +91,7 @@ void loop()
     if (no_error) error_status = 0;
   }
 
-  if ( (millis() - timestamp) >= 1000 ) {
+  if ( (millis() - interval_timestamp) >= 1000 ) {
     //Serial.println("blink = " + (String)blink_counter);
     switch (error_status) {
       case 255:
@@ -119,22 +131,24 @@ void loop()
        }
        break;
     }
-    timestamp = millis();
+    interval_timestamp = millis();
   }
 }
 
 
-String getFormattedDate ( void ) {
+String getFormattedDate (void) {
   unsigned long epochTime = ntpClient.getEpochTime();
-  struct tm *ptm = gmtime ((time_t *)&epochTime); 
+  struct tm *ptm = gmtime((time_t *)&epochTime); 
  
-  int monthDay = ptm->tm_mday;
+  unsigned long monthDay = ptm->tm_mday;
+  String monthDayStr = (monthDay < 10) ? "0" + String(monthDay) : String(monthDay);
  
-  int currentMonth = ptm->tm_mon + 1;
+  unsigned long currentMonth = ptm->tm_mon + 1;
+  String currentMonthStr = (currentMonth < 10) ? "0" + String(currentMonth) : String(currentMonth);
  
-  int currentYear = ptm->tm_year + 1900;
+  unsigned long currentYear = ptm->tm_year + 1900;
   
   //Print complete date:
-  String currentDate = String(monthDay) + "-" + String(currentMonth) + "-" + String(currentYear);
+  String currentDate = monthDayStr + "/" + currentMonthStr + "/" + String(currentYear);
   return currentDate;
 }

@@ -2,10 +2,9 @@
 #include <ESP8266WebServer.h>
 #include <WiFiManager.h>
 #include <DHT.h>
-#include <FS.h>
-#include <LittleFS.h>  //https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
-#include <NTPClient.h>
-#include <WiFiUdp.h>
+#include <LittleFS.h>   //https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
+#include <NTPClient.h>  //https://github.com/arduino-libraries/NTPClient
+#include <WiFiUdp.h>  
 
 #define DHT_PIN       D7//             <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
 #define DHT_TYPE      DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
