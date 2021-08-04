@@ -31,30 +31,47 @@ int blink_counter = 0;
 // Arquivos de armazenamento de dados
 const char * sensors_data_path = "/data/data.csv";
 const char * interval_file_path = "/data/interval.txt";
-const char * last_ntp_timestamp_path = "/time/timestamp.txt"; // NAO UTILIZADO
+ 
+/** 
+ *  Configuração do cliente NTP e do timedate input
+ **/
 
-char custom_time[65]; // Parâmetros customizados no Portal de Configuração
-char custom_date[65];
+char custom_time[64];
+char custom_date[64];
 
+unsigned long int custom_unixTimestamp;
+
+#define DEBUG_NTPClient // Ativa o debug da lib NTPClient.h
 WiFiUDP ntpUDP;
-NTPClient ntpClient(ntpUDP, "pool.ntp.org",  -3 * 3600);
+NTPClient ntpClient(ntpUDP, -3 * 3600);
   
 void setup()
 {
   pinMode(POWER_LED, OUTPUT);
-  digitalWrite(POWER_LED, HIGH); //Liga led sinalizador, indicando que o programa foi iniciado
+  digitalWrite(POWER_LED, HIGH); //Liga led sinalizador, indicando que o programa foi inicializado
+  
   Serial.println("\nIniciando LittleFS...");
      if (!LittleFS.begin()) {
      Serial.println(" [ERRO]");
   }
-  Serial.begin(115200);  
+
+  strcpy(custom_time, readFile("/time/custom-time.txt").c_str()); // Parâmetros customizados no Portal de Configuração
+  strcpy(custom_date, readFile("/time/custom-date.txt").c_str());
+  
+  Serial.begin(115200);
+
+    deleteFile(interval_file_path);
+    deleteFile(sensors_data_path);
+    deleteFile("/time/custom-data.txt");
+    deleteFile("/time/custom-time.txt");
+    
   setLedsPinMode(); //Inicializa pinMode dos leds de sinalização como output
   initWiFiManager();
   initWebServer();
-  displayNetworkConfiguration(); //Exibe SSID, IP e RSSI da rede na comunicacao Serial
-  saveAPIP();
+  displayNetInfo(); // Exibe SSID, IP e RSSI da rede na comunicacao Serial
+  saveSTAIp(); // Guarda o IP obtido no modo Station na memória 
 
-  ntpClient.begin();
+  //ntpClient.begin();
   
   dht.begin();
   interval = getInterval();
@@ -68,17 +85,19 @@ void loop()
 
   if ( (timerControl = millis()) - counter >= interval ) {
     no_error = true; //reseta variável
-    turn_off_leds();
+    turn_off_leds(); //apaga todos os LEDs de sinalização
     //        requestServer();  REQUISÇÃO AO SERVIDOR DESATIVADA
     //        Serial.println("Enviando Requisição ao servidor");
 
                                                                       // CASO NÃO HAJA INTERNERT, NÂO HAVERÁ ACESSO AO SERVIDOR NTP
-    if (!ntpClient.isTimeSet()) {  // Se o tempo não for definido
-      Serial.println("O tempo não foi definido");
-      Serial.print("Tempo definido salvo na memória: "); // O tempo salvo na memória deverá ser usado
-      Serial.println(custom_time);
-      Serial.print("Data definida na memória: ");
-      Serial.println(custom_date);
+    if (!ntpClient.isTimeSet()) {  // Se o tempo não for definido automaticamente pelo servidor NTP
+      Serial.println("O tempo não foi definido.");
+
+      ntpClient.setCurrentEpoc(custom_unixTimestamp);
+      Serial.println("Tempo customizado: ");
+      Serial.println(ntpClient.getFormattedTime());
+      Serial.println("Data customizada: ");
+      Serial.println(getFormattedDate());
     }
     
     appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + ntpClient.getFormattedTime() + " " + getFormattedDate() + "\n");
@@ -137,8 +156,11 @@ void loop()
 
 
 String getFormattedDate (void) {
-  unsigned long epochTime = ntpClient.getEpochTime();
-  struct tm *ptm = gmtime((time_t *)&epochTime); 
+  time_t epochTime = ntpClient.getEpochTime();
+  Serial.println("=========NTPClient.getEpochTime() in getFormattedDate()==========");
+  Serial.println(ntpClient.getEpochTime());
+  Serial.println(epochTime);
+  struct tm *ptm = gmtime(&epochTime); 
  
   unsigned long monthDay = ptm->tm_mday;
   String monthDayStr = (monthDay < 10) ? "0" + String(monthDay) : String(monthDay);
@@ -147,8 +169,74 @@ String getFormattedDate (void) {
   String currentMonthStr = (currentMonth < 10) ? "0" + String(currentMonth) : String(currentMonth);
  
   unsigned long currentYear = ptm->tm_year + 1900;
+  String currentYearStr = String(currentYear);
+
+  Serial.println("=========TM Structure inside getFormattedDate()==========");
+  Serial.println(ptm->tm_mday);
+  Serial.println(ptm->tm_mon);
+  Serial.println(ptm->tm_year); //ERRO
+
+  Serial.println("=========cY, cM, cmD in getFormattedDate()==========");
+  Serial.println(currentYearStr);
+  Serial.println(currentMonthStr);
+  Serial.println(monthDayStr);
+
   
   //Print complete date:
-  String currentDate = monthDayStr + "/" + currentMonthStr + "/" + String(currentYear);
+  String currentDate = monthDayStr + "/" + currentMonthStr + "/" + currentYearStr;
   return currentDate;
+}
+
+
+unsigned long convertToUnixTimestamp (String date_str, String time_str)
+{
+  uint8_t mday = (date_str.substring(0, 2)).toInt();
+  uint8_t month = (date_str.substring(3, 5)).toInt();
+  uint16_t year = (date_str.substring(6)).toInt();
+
+  uint8_t hour = (time_str.substring(0, 2)).toInt();
+  uint8_t minute = (time_str.substring(3, 5)).toInt();
+  uint8_t sec = (time_str.substring(6)).toInt();
+
+  
+  Serial.println("==========Datatime Parsed=========");
+  Serial.println(year);
+  Serial.println(month);
+  Serial.println(mday);
+  Serial.println(hour);
+  Serial.println(minute);
+  Serial.println(sec);
+
+
+  struct tm ct{};
+  ct.tm_year = year - 1900;
+  ct.tm_mon = month - 1;
+  ct.tm_mday = mday;
+  ct.tm_hour = hour + 3; //Acrescenta-se +3 para compensar o UTC-3 informado pelo usuário
+  ct.tm_min = minute;
+  ct.tm_sec = sec;
+
+  Serial.println("==========TM STRUCTURE=========");
+  Serial.println(ct.tm_year);
+  Serial.println(ct.tm_mon);
+  Serial.println(ct.tm_mday);
+  Serial.println(ct.tm_hour);
+  Serial.println(ct.tm_min);
+  Serial.println(ct.tm_sec);
+
+  unsigned long currentEpoc = (unsigned long)mktime(&ct);
+  Serial.println("==========CUSTOM_TIMESTSMP in UNIX EPOCH UTC-3=========");
+  Serial.println(currentEpoc);
+
+  return currentEpoc;
+}
+
+float convertToLux ( int value )
+{
+  float vin = 3.3;
+  float vout = ( value * ( vin / 1023 ) ); // tensão
+  float resLDR = ( 10.0 * ( vin - vout ) ) / vout;
+  float lux = 500.0/resLDR;
+
+  return lux;
 }

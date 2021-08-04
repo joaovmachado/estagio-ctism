@@ -13,7 +13,7 @@ String readFile(const char * path) {
     output = file.readStringUntil('\n');
     Serial.println(output);
   }
-  Serial.println(" [OK]");
+  Serial.println(" [SUCESS]");
 
   file.close();
   return output;
@@ -66,7 +66,7 @@ void appendFile(const char * path, String message) {
 }
 
 
-void saveAPIP() {
+void saveSTAIp() {
   String ip = WiFi.localIP().toString();
   Serial.printf("Salvando IP %s", ip.c_str());
   if (ip != "(IP unset)")

@@ -25,39 +25,51 @@ void initWiFiManager()
 
   WiFiManager wifiManager;
 
+  // Exibe o STA IP salvo na memória no topo da página de configuração, útil para acessar o webserver no modo STA, ainda que impreciso
   String lastIPSaved = "<p style=\"text-align=center\">Último IP registado: " + readFile("/data/ipaddress.txt") + "</p>";
   wifiManager.setCustomHeadElement(lastIPSaved.c_str());
 
-  // id/name, placeholder/prompt, default, length
-  WiFiManagerParameter custom_time_parameter("customTimeParameter", "Hora atual (Formato: HH:MM:SS) ", "Nenhum valor informado", 65);
-  WiFiManagerParameter custom_date_parameter("customDateParameter", "Data atual (Formato: dd/mm/aaaa) ", "Nenhum valor informado", 65);
+  // Configura os parâmetros customizados para serem exibidos no formulário de configuração da rede WiFi, a saber, hora e data corrente
+  // id/name, placeholder/prompt, default, length {WiFiManagerParameter Sintax}
+  WiFiManagerParameter custom_time_parameter("customTimeParameter", "Hora atual (Formato: HH:MM:SS) ", (strcmp(custom_time, "failed") != 0) ? custom_time : "", 65);
+  WiFiManagerParameter custom_date_parameter("customDateParameter", "Data atual (Formato: dd/mm/aaaa) ", (strcmp(custom_date, "failed") != 0) ? custom_date : "", 65);
   wifiManager.addParameter(&custom_time_parameter);
   wifiManager.addParameter(&custom_date_parameter);
 
+  //wifiManager.setCustomHeadElement("<p style=\"text-align=center\"><a href='/'>Baixar dados dos sensores</a></p>");
+
+  //      wifiManager.setConfigPortalTimeout(30);
+  wifiManager.startConfigPortal("ESP8266", "redeesp8266");  // Inicia a página de configuração, sem consultar a memória
+  ntpClient.setLastUpdate(0); // A contagem da sincronização deve ser inicializada somente após a configuração no Config Portal
+
+  // Copia os valores obtidos para custom_time e custom_date 
   strcpy(custom_time, custom_time_parameter.getValue());
   strcpy(custom_date, custom_date_parameter.getValue());
 
-  //wifiManager.setCustomHeadElement("<p style=\"text-align=center\"><a href='/'>Baixar dados dos sensores</a></p>");
+  writeFile("/time/custom-time.txt", custom_time);
+  writeFile("/time/custom-date.txt", custom_date);
 
-  if (WiFi.SSID() != "") wifiManager.setConfigPortalTimeout(20); // Verifica se há um SSID salvo, caso contrário não define o timeout
+  Serial.println("==========Time / Date=========");
+  Serial.println(custom_time);
+  Serial.println(custom_date);
 
-  wifiManager.startConfigPortal();  // Inicia a página de configuração, sem consultar a memória
 
-  //wifiManager.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória
+  custom_unixTimestamp = convertToUnixTimestamp(custom_date, custom_time);
+  Serial.println("==========VAR custom_unixTimestamp=========");
+  Serial.println(custom_unixTimestamp);
+
+  //wifiManager.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória - Seria interessante setar essa opcao no portal de configuracao
 }
 
 
 // Função que retorna os dados de configuração da rede para a Serial, exibe a interface de rede: SSID, IP e RSSI da conexão
-void displayNetworkConfiguration() //Network Interface Status
+void displayNetInfo() //Network Interface Status
 {
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
 
   Serial.println("Endereço IP: ");
   Serial.println(WiFi.localIP());
-
-  long rssi = WiFi.RSSI();
-  Serial.println("Intensidade do Sinal (RSSI): " + (String)rssi + " dBm.");
 }
 
 
