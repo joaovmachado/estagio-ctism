@@ -1,3 +1,7 @@
+#define RED_LED D1
+#define GREEN_LED D2
+#define BLUE_LED D6
+
 void setLedsPinMode() {
   pinMode(RED_LED, OUTPUT);
   pinMode(GREEN_LED, OUTPUT);

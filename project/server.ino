@@ -3,15 +3,15 @@ unsigned long interval = 15000;
 
 int getInterval() {
 
-  String hold_interval_mstring = readFile(interval_file_path); //valor salvo na memória que define o intervalo
+  String hold_interval_mstring = readFile("/data/interval.txt"); //valor salvo na memória que define o intervalo
 
   //Tratamento de exceção caso o valor lido na memória retorne um erro
   if (hold_interval_mstring != "failed") {
     interval = hold_interval_mstring.toInt();
   }
-  else if (!LittleFS.exists(interval_file_path)) {
+  else if (!LittleFS.exists("/data/interval.txt")) {
       Serial.println("Não foi encontrado o arquivo /data/interval.txt, definindo intervalo para 20 segundos. [Forçado]");
-      writeFile(interval_file_path, "20000");
+      writeFile("/data/interval.txt", "20000");
       interval = 20000;
   }
   return interval;
@@ -19,7 +19,7 @@ int getInterval() {
 
 
 void setInterval( int set_value ) {
-  writeFile(interval_file_path, (String)set_value); //Escreve o intervalo obtido na memoria
+  writeFile("/data/interval.txt", (String)set_value); //Escreve o intervalo obtido na memoria
 }
 
 
@@ -47,7 +47,7 @@ void initWebServer() {
 
   server.on("/data", HTTP_GET, [](){
 
-    File file = LittleFS.open(sensors_data_path, "r");
+    File file = LittleFS.open("/data.csv", "r");
     server.streamFile(file, "text/csv");
     file.close();
     });
@@ -86,7 +86,7 @@ void initWebServer() {
 
   server.on("/delete-sensors-data", HTTP_GET, [](){
     if (server.arg("trigger") == "true"){
-      deleteFile(sensors_data_path);  
+      deleteFile("/data.csv");  
     }
     server.sendHeader("Location", "/", true); // Redireciona para a homepage
     server.send(302); 
