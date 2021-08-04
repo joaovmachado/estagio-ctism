@@ -4,7 +4,6 @@
 #include <DHT.h>
 #include <LittleFS.h>   //https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
 #include <NTPClient.h>  //https://github.com/arduino-libraries/NTPClient
-#include <WiFiUdp.h>  
 
 #define DHT_PIN       D7//             <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
 #define DHT_TYPE      DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
@@ -18,7 +17,7 @@
   //Protótipos de funções
     //connection.ino
     void initWiFiManager( void );                       // Inicializa WiFiManager
-    void displayNetworkConfiguration( void );           // Retorna os dados de configuração da rede para a Serial, exibe a interface de rede: SSID, IP e RSSI da conexão
+    void displayNetInfo( void );           // Retorna os dados de configuração da rede para a Serial, exibe a interface de rede: SSID, IP e RSSI da conexão
     void requestServer( void );                         // Envia uma requisição para o servidor pré-definido
     String createRequest( void );                       // Retorna uma String contendo uma requisição HTTP POST contendo um JSON no corpo do pacote
 
@@ -26,7 +25,7 @@
     String readFile(const char * path);                 // Faz a leitura de um arquivo
     void writeFile(const char * path, String input);    // Grava uma String em um arquivo
     void appendFile(const char * path, String message); // Anexa uma String em um arquivo
-    void saveAPIP( void );                              // Grava o último IP definido no modo Acess Point
+    void saveSTAIp( void );                              // Grava o último IP definido no modo Station
     
     //led_rgb.ino  -  Funções de controle dos LEDs no circuito do projeto
     void setLedsPinMode( void );                        // Define os pinos digitais conectados aos LEDs como pinos de saída
