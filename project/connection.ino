@@ -40,7 +40,8 @@ void initWiFiManager()
 
   //      wifiManager.setConfigPortalTimeout(30);
   wifiManager.startConfigPortal("ESP8266", "redeesp8266");  // Inicia a página de configuração, sem consultar a memória
-  ntpClient.setLastUpdate(0); // A contagem da sincronização deve ser inicializada somente após a configuração no Config Portal
+
+  ntpClient.resetLastUpdate(); // A contagem da sincronização deve ser inicializada somente após a configuração no Config Portal
 
   // Copia os valores obtidos para custom_time e custom_date 
   strcpy(custom_time, custom_time_parameter.getValue());
@@ -49,14 +50,8 @@ void initWiFiManager()
   writeFile("/time/custom-time.txt", custom_time);
   writeFile("/time/custom-date.txt", custom_date);
 
-  Serial.println("==========Time / Date=========");
-  Serial.println(custom_time);
-  Serial.println(custom_date);
-
-
+  // A data informada é convertida em segundos desde 01/01/1970 (Unix Epoch)
   custom_unixTimestamp = convertToUnixTimestamp(custom_date, custom_time);
-  Serial.println("==========VAR custom_unixTimestamp=========");
-  Serial.println(custom_unixTimestamp);
 
   //wifiManager.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória - Seria interessante setar essa opcao no portal de configuracao
 }

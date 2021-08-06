@@ -71,7 +71,7 @@ void setup()
   displayNetInfo(); // Exibe SSID, IP e RSSI da rede na comunicacao Serial
   saveSTAIp(); // Guarda o IP obtido no modo Station na memória 
 
-  //ntpClient.begin();
+  ntpClient.begin();
   
   dht.begin();
   interval = getInterval();
@@ -157,10 +157,7 @@ void loop()
 
 String getFormattedDate (void) {
   time_t epochTime = ntpClient.getEpochTime();
-  Serial.println("=========NTPClient.getEpochTime() in getFormattedDate()==========");
-  Serial.println(ntpClient.getEpochTime());
-  Serial.println(epochTime);
-  struct tm *ptm = gmtime(&epochTime); 
+  struct tm *ptm = gmtime(&epochTime);
  
   unsigned long monthDay = ptm->tm_mday;
   String monthDayStr = (monthDay < 10) ? "0" + String(monthDay) : String(monthDay);
@@ -168,7 +165,7 @@ String getFormattedDate (void) {
   unsigned long currentMonth = ptm->tm_mon + 1;
   String currentMonthStr = (currentMonth < 10) ? "0" + String(currentMonth) : String(currentMonth);
  
-  unsigned long currentYear = ptm->tm_year + 1900;
+  unsigned long currentYear = ptm->tm_year + 1900; //tm_years -> anos decorridos desde 1900
   String currentYearStr = String(currentYear);
 
   Serial.println("=========TM Structure inside getFormattedDate()==========");
@@ -209,8 +206,8 @@ unsigned long convertToUnixTimestamp (String date_str, String time_str)
 
 
   struct tm ct{};
-  ct.tm_year = year - 1900;
-  ct.tm_mon = month - 1;
+  ct.tm_year = year - 1900; // Tempo decorrido desde 1900
+  ct.tm_mon = month - 1; // 0 representa janeiro
   ct.tm_mday = mday;
   ct.tm_hour = hour + 3; //Acrescenta-se +3 para compensar o UTC-3 informado pelo usuário
   ct.tm_min = minute;
