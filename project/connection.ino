@@ -31,8 +31,8 @@ void initWiFiManager()
 
   // Configura os parâmetros customizados para serem exibidos no formulário de configuração da rede WiFi, a saber, hora e data corrente
   // id/name, placeholder/prompt, default, length {WiFiManagerParameter Sintax}
-  WiFiManagerParameter custom_time_parameter("customTimeParameter", "Hora atual (Formato: HH:MM:SS) ", (strcmp(custom_time, "failed") != 0) ? custom_time : "", 65);
-  WiFiManagerParameter custom_date_parameter("customDateParameter", "Data atual (Formato: dd/mm/aaaa) ", (strcmp(custom_date, "failed") != 0) ? custom_date : "", 65);
+  WiFiManagerParameter custom_time_parameter("customTimeParameter", "Hora atual (Formato: HH:MM:SS) ", (strcmp(custom_time, "failed") != 0) ? custom_time : "", 8);
+  WiFiManagerParameter custom_date_parameter("customDateParameter", "Data atual (Formato: dd/mm/aaaa) ", (strcmp(custom_date, "failed") != 0) ? custom_date : "", 10);
   wifiManager.addParameter(&custom_time_parameter);
   wifiManager.addParameter(&custom_date_parameter);
 

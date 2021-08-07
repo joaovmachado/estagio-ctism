@@ -1,6 +1,3 @@
-unsigned long interval = 15000;
-
-
 int getInterval() {
 
   String hold_interval_mstring = readFile(interval_file_path); //valor salvo na memória que define o intervalo
@@ -50,7 +47,7 @@ void initWebServer() {
     File file = LittleFS.open(sensors_data_path, "r");
     server.streamFile(file, "text/csv");
     file.close();
-    });
+  });
  
   server.on("/get", HTTP_GET, [](){ //quando o client submitar, nosso action o joga na rota de "/get"
     if (server.hasArg("input1")){

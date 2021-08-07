@@ -22,7 +22,7 @@ extern DNSServer dns;
 unsigned long counter = 0;
 unsigned long timerControl;
 unsigned int interval_timestamp = 0;
-extern unsigned long interval;
+unsigned long interval;
 
 byte error_status;
 bool no_error = true;
@@ -61,7 +61,7 @@ void setup()
   Serial.begin(115200);
 
     deleteFile(interval_file_path);
-    deleteFile(sensors_data_path);
+    //deleteFile(sensors_data_path);
     deleteFile("/time/custom-data.txt");
     deleteFile("/time/custom-time.txt");
     
@@ -194,7 +194,6 @@ unsigned long convertToUnixTimestamp (String date_str, String time_str)
   uint8_t hour = (time_str.substring(0, 2)).toInt();
   uint8_t minute = (time_str.substring(3, 5)).toInt();
   uint8_t sec = (time_str.substring(6)).toInt();
-
   
   Serial.println("==========Datatime Parsed=========");
   Serial.println(year);
@@ -203,7 +202,9 @@ unsigned long convertToUnixTimestamp (String date_str, String time_str)
   Serial.println(hour);
   Serial.println(minute);
   Serial.println(sec);
-
+  
+  if (year == 0) year = 1900;
+  if (month == 0) month = 1;
 
   struct tm ct{};
   ct.tm_year = year - 1900; // Tempo decorrido desde 1900
