@@ -5,6 +5,9 @@
 #include <LittleFS.h>   //https://arduino-esp8266.readthedocs.io/en/latest/filesystem.html
 #include <NTPClient.h>  //https://github.com/arduino-libraries/NTPClient
 
+#define DEBUG_NTPClient // Ativa o debug da lib NTPClient.h
+//#define TM_DEBUG      // Debug das funções de tempo e data
+
 #define DHT_PIN       D7//             <-- MODIFICAR DE ACORDO COM AS CONFIGURAÇÕES DOS SENSORES
 #define DHT_TYPE      DHT11//          <--      ~(˘▾˘~)   ♥‿♥   (~˘▾˘)~
 #define LDR_PIN       A0
@@ -17,7 +20,7 @@
   //Protótipos de funções
     //connection.ino
     void initWiFiManager( void );                       // Inicializa WiFiManager
-    void displayNetInfo( void );           // Retorna os dados de configuração da rede para a Serial, exibe a interface de rede: SSID, IP e RSSI da conexão
+    void displayNetInfo( void );                        // Retorna os dados de configuração da rede para a Serial, exibe a interface de rede: SSID, IP e RSSI da conexão
     void requestServer( void );                         // Envia uma requisição para o servidor pré-definido
     String createRequest( void );                       // Retorna uma String contendo uma requisição HTTP POST contendo um JSON no corpo do pacote
 
@@ -35,7 +38,7 @@
     void turn_off_leds( void );                         // Desliga todos os LEDs que estiverem ligados
     
     //sensors.ino  -  Funções relacionadas aos sensores
-    float convertToLux (int value);                     // Retorna a medição em lux de um sinal análógico como entrada
+    float analogValueToPercent (int value);                     // Retorna a medição em porcentagem de um sinal análógico como entrada
 
     //server.ino  -  Funções relacionadas com o manuseio de requisições e de respostas do webserver inicizalizado
     void initWebServer( void );                         // Inicializa Servidor interno do Esp8266

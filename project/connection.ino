@@ -1,22 +1,3 @@
-/* Função que inicia conexão WiFi através das variáveis de configuração da rede
-void startWiFi()
-{
-  if ( WiFi.status() == WL_NO_SHIELD ) {
-    Serial.println("O Shield Wifi não foi reconhecido!");
-    Serial.println("Programa Finalizado...");
-    while (true); //Interrompe execução do programa
-  }
-
-  Serial.print("Tentando estabelecer comunicação com " + (String)ssid);
-  while ( WiFi.status() != WL_CONNECTED ) {
-    //Testa conexão com rede WPA/WPA2
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("[OK]\n");
-}
-*/
-
 // Função que gerencia configuração da rede com WiFiManager
 void initWiFiManager()
 {
@@ -60,11 +41,13 @@ void initWiFiManager()
 // Função que retorna os dados de configuração da rede para a Serial, exibe a interface de rede: SSID, IP e RSSI da conexão
 void displayNetInfo() //Network Interface Status
 {
+  Serial.println("\n--------NetInfo--------");
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
 
-  Serial.println("Endereço IP: ");
+  Serial.print("Endereço IP: ");
   Serial.println(WiFi.localIP());
+  Serial.println();
 }
 
 

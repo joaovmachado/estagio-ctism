@@ -3,10 +3,6 @@
 //Configurações de Sensores
 DHT dht(DHT_PIN, DHT_TYPE);
 
-//Configurações da Interface de Rede Wifi
-//const char *ssid = "";//Identificador de rede   <-- MODIFICAR DE ACORDO COM A REDE
-//const char *passwd = "";//Senha                 <-- ʕ•ᴥ•ʔ
-
 // Informações básicas do servidor...
 const char *host =  "www.megatecnologia.com.br"; //URL servidor
 const char *route = "/controle/silas.json";
@@ -41,7 +37,6 @@ char custom_date[64];
 
 unsigned long int custom_unixTimestamp;
 
-#define DEBUG_NTPClient // Ativa o debug da lib NTPClient.h
 WiFiUDP ntpUDP;
 NTPClient ntpClient(ntpUDP, -3 * 3600);
   
@@ -60,10 +55,10 @@ void setup()
   
   Serial.begin(115200);
 
-    deleteFile(interval_file_path);
+    //deleteFile(interval_file_path);
     //deleteFile(sensors_data_path);
-    deleteFile("/time/custom-data.txt");
-    deleteFile("/time/custom-time.txt");
+    //deleteFile("/time/custom-data.txt");
+    //deleteFile("/time/custom-time.txt");
     
   setLedsPinMode(); //Inicializa pinMode dos leds de sinalização como output
   initWiFiManager();
@@ -83,6 +78,8 @@ void loop()
 {
   server.handleClient();
 
+  ntpClient.setUpdateInterval(interval - 2000); // Tempo de sincronização com o servidor será de 2 segundos antes do intervalo de escrita
+
   if ( (timerControl = millis()) - counter >= interval ) {
     no_error = true; //reseta variável
     turn_off_leds(); //apaga todos os LEDs de sinalização
@@ -91,13 +88,13 @@ void loop()
 
                                                                       // CASO NÃO HAJA INTERNERT, NÂO HAVERÁ ACESSO AO SERVIDOR NTP
     if (!ntpClient.isTimeSet()) {  // Se o tempo não for definido automaticamente pelo servidor NTP
-      Serial.println("O tempo não foi definido.");
 
       ntpClient.setCurrentEpoc(custom_unixTimestamp);
-      Serial.println("Tempo customizado: ");
-      Serial.println(ntpClient.getFormattedTime());
-      Serial.println("Data customizada: ");
-      Serial.println(getFormattedDate());
+      
+      #ifdef TM_DEBUG
+      Serial.println("Não foi possível obter sincronização com o servidor NTP! [Error]");
+      Serial.println("Passando a utilizar data e tempo customizados: %s %s...", ntpClient.getFormattedTime().c_str(), getFormattedDate().c_str());
+      #endif
     }
     
     appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + ntpClient.getFormattedTime() + " " + getFormattedDate() + "\n");
@@ -168,15 +165,17 @@ String getFormattedDate (void) {
   unsigned long currentYear = ptm->tm_year + 1900; //tm_years -> anos decorridos desde 1900
   String currentYearStr = String(currentYear);
 
+  #ifdef TM_DEBUG
   Serial.println("=========TM Structure inside getFormattedDate()==========");
   Serial.println(ptm->tm_mday);
   Serial.println(ptm->tm_mon);
-  Serial.println(ptm->tm_year); //ERRO
+  Serial.println(ptm->tm_year);
 
   Serial.println("=========cY, cM, cmD in getFormattedDate()==========");
   Serial.println(currentYearStr);
   Serial.println(currentMonthStr);
   Serial.println(monthDayStr);
+  #endif
 
   
   //Print complete date:
@@ -195,14 +194,6 @@ unsigned long convertToUnixTimestamp (String date_str, String time_str)
   uint8_t minute = (time_str.substring(3, 5)).toInt();
   uint8_t sec = (time_str.substring(6)).toInt();
   
-  Serial.println("==========Datatime Parsed=========");
-  Serial.println(year);
-  Serial.println(month);
-  Serial.println(mday);
-  Serial.println(hour);
-  Serial.println(minute);
-  Serial.println(sec);
-  
   if (year == 0) year = 1900;
   if (month == 0) month = 1;
 
@@ -214,6 +205,16 @@ unsigned long convertToUnixTimestamp (String date_str, String time_str)
   ct.tm_min = minute;
   ct.tm_sec = sec;
 
+  unsigned long currentEpoc = (unsigned long)mktime(&ct);
+
+  #ifdef TM_DEBUG
+  Serial.println("==========Datetime Parsed=========");
+  Serial.println(year);
+  Serial.println(month);
+  Serial.println(mday);
+  Serial.println(hour);
+  Serial.println(minute);
+  Serial.println(sec);
   Serial.println("==========TM STRUCTURE=========");
   Serial.println(ct.tm_year);
   Serial.println(ct.tm_mon);
@@ -221,20 +222,14 @@ unsigned long convertToUnixTimestamp (String date_str, String time_str)
   Serial.println(ct.tm_hour);
   Serial.println(ct.tm_min);
   Serial.println(ct.tm_sec);
-
-  unsigned long currentEpoc = (unsigned long)mktime(&ct);
   Serial.println("==========CUSTOM_TIMESTSMP in UNIX EPOCH UTC-3=========");
   Serial.println(currentEpoc);
+  #endif
 
   return currentEpoc;
 }
 
-float convertToLux ( int value )
+float analogValueToPercent ( int value )
 {
-  float vin = 3.3;
-  float vout = ( value * ( vin / 1023 ) ); // tensão
-  float resLDR = ( 10.0 * ( vin - vout ) ) / vout;
-  float lux = 500.0/resLDR;
-
-  return lux;
+  return (value * 100.0) / 1024.0;
 }

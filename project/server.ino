@@ -113,7 +113,7 @@ void initWebServer() {
   });
 
   server.on("/luminosity", HTTP_GET, [](){
-    server.send(200, "text/plain", String( convertToLux(analogRead(LDR_PIN)) )); 
+    server.send(200, "text/plain", String( analogValueToPercent(analogRead(LDR_PIN)) ) + "%"); 
   });
 //
 
