@@ -77,10 +77,6 @@ void requestServer()
   bool is200 = false;
   bool isfirst_line = true;
 
-  Serial.print("no_error? "); Serial.println(no_error);
-  Serial.print("is_200? "); Serial.println(is200);
-  Serial.print("is_first_line? "); Serial.println(isfirst_line);
-
   Serial.println("\n[Response:]");
   
   while ( client.connected() || client.available() ) {

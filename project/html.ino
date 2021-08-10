@@ -314,8 +314,8 @@ const char request_config_html[] PROGMEM = R"rawliteral(
 
 <textarea rows="6" cols="70" name="json" id="json" form="request-config" placeholder="Formato do corpo da requisição HTTP"></textarea>
 <pre>
-$[T] substitui o texto pela temperatura lida no momento, bem como 
-$[H] é reescrito de acordo com a umidade lida no sensor.
+[T] substitui o texto pela temperatura lida no momento, bem como 
+[H] é reescrito de acordo com a umidade lida no sensor.
 </pre>
 
 </body>
