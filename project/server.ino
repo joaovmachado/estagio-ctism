@@ -58,6 +58,8 @@ void initWebServer() {
       if (server.hasArg("query")) {
         writeFile("/query.txt", "?" + server.arg("query"));
       }
+
+      writeFile("/json.txt", server.arg("json"));
     }
   });
 

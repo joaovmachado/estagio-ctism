@@ -117,7 +117,8 @@ String createRequest()
   //extern String json;
   //String body = json;
 
-  String body = "{\"api_key\": \"I9J4ZEW27Z943VHU\", \"field1\": \"50\", \"field2\": 20}";
+  String body = readFile("/json.txt");
+  //{"api_key": "I9J4ZEW27Z943VHU", "field1": "50", "field2": 20}
 
   String req;
   req =  "POST " + readFile("/path.txt") + readFile("/query.txt") + " HTTP/1.1\r\n";
