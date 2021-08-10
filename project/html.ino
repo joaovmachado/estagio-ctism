@@ -1,7 +1,7 @@
 //O PROGMEM é um modificador de variável que armazena a string na memoria flash do arduino; a biblioteca desta função é a pgmspace.h, incluída automaticamente
 //RAWLITERAL indica que se trata de uma String Literal, onde todos os caracteres são incluídos
- 
- 
+
+
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -18,7 +18,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <section class="form hide">
         <form action="/get">
             <spam id="hms">Horas : Minutos : Segundos</spam>
-            <input type="time" value="00:00:00" id="time" name="input1" min="00:00:15" step="1" required>         
+            <input type="time" value="00:00:00" id="time" name="input1" min="00:00:15" step="1" required="">         
             <input type="submit" value="Enviar">
             <div>
                 <input type="checkbox" name="sendNow" id="sendNow" value="1">
@@ -27,9 +27,10 @@ const char index_html[] PROGMEM = R"rawliteral(
         </form>
     </section>
 
-    
     <p>O intervalo de medição atual é:</p>
     <span class="ti" id="ShowInterval"></span>
+
+    <a href="/request-config">Configurações Avançadas</a>
 
     <section id="feedback">
         <p>Temperatura (°C): </p>
@@ -212,6 +213,13 @@ form input[type="submit"], #time{
     min-height: 50px;
 }
 
+form input.cancel-submit {
+    font-size: 12pt;
+    background-color: #F0F0F0;
+    border-radius: 8px;
+    min-height: 50px;
+}
+
 #hms{
     color: white;
     background-color: #7685A8;
@@ -273,4 +281,36 @@ setInterval(function(){
     sendRequest("humidity");
     sendRequest("luminosity");
 }, 1000);
+)rawliteral";
+
+
+
+/* 
+ *  Página de configuração do pacote de requisição
+ */
+const char request_config_html[] PROGMEM = R"rawliteral(
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Configurar pacote de requisição</title>
+    <link href="css.css" rel="stylesheet">
+</head>
+<body>
+
+<section class="form">
+  <form action="/request-config">
+    HOST:
+    <input type="text" value="" id="host" name="host" required="">
+    PATH:
+    <input type="text" value="" id="path" name="path" required="">
+    QUERY:
+    <input type="text" value="" id="query" name="query">
+     
+    <input type="submit" value="Enviar">
+    <input type="button" class="cancel-submit" onclick="window.location='/';" value="Cancelar">
+  </form>
+</section>
+
+</body>
 )rawliteral";

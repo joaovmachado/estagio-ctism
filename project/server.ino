@@ -37,9 +37,28 @@ void notFound() {
 void initWebServer() {
   //E necessário inicializar rede WiFi -> ou seja, deve vir depois de WiFi.begin()
   //Ver server.serveStatic -> SPIFFS
-  
+
   server.on("/", HTTP_GET, [](){
     server.send_P(200, "text/html", index_html); //utilizamos send_P porque os dados estão na memeria flash (PROGMEM)
+  });
+
+  server.on("/request-config", HTTP_GET, [](){
+    server.send_P(200, "text/html", request_config_html);
+
+    if (server.hasArg("host")) {
+      writeFile("/host.txt", server.arg("host"));
+      
+      if (server.hasArg("path")) {
+        writeFile("/path.txt", server.arg("path"));
+      }
+      else {
+        writeFile("/path.txt", "/");
+      }
+
+      if (server.hasArg("query")) {
+        writeFile("/query.txt", "?" + server.arg("query"));
+      }
+    }
   });
 
   server.on("/data", HTTP_GET, [](){

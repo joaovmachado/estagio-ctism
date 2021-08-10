@@ -13,9 +13,9 @@
 #define LDR_PIN       A0
 
 #define POWER_LED     D5
-#define RED_LED D1
-#define GREEN_LED D2
-#define BLUE_LED D6
+#define RED_LED       D1
+#define GREEN_LED     D2
+#define BLUE_LED      D6
 
   //Protótipos de funções
     //connection.ino
@@ -28,7 +28,7 @@
     String readFile(const char * path);                 // Faz a leitura de um arquivo
     void writeFile(const char * path, String input);    // Grava uma String em um arquivo
     void appendFile(const char * path, String message); // Anexa uma String em um arquivo
-    void saveSTAIp( void );                              // Grava o último IP definido no modo Station
+    void saveSTAIp( void );                             // Grava o último IP definido no modo Station
     
     //led_rgb.ino  -  Funções de controle dos LEDs no circuito do projeto
     void setLedsPinMode( void );                        // Define os pinos digitais conectados aos LEDs como pinos de saída
@@ -38,7 +38,7 @@
     void turn_off_leds( void );                         // Desliga todos os LEDs que estiverem ligados
     
     //sensors.ino  -  Funções relacionadas aos sensores
-    float analogValueToPercent (int value);                     // Retorna a medição em porcentagem de um sinal análógico como entrada
+    float analogValueToPercent (int value);             // Retorna a medição em porcentagem de um sinal análógico como entrada
 
     //server.ino  -  Funções relacionadas com o manuseio de requisições e de respostas do webserver inicizalizado
     void initWebServer( void );                         // Inicializa Servidor interno do Esp8266
@@ -46,4 +46,4 @@
     void setInterval(int set_value);                    // Armazena um inteiro de entrada na memória flash do esp8266
 
     String getFormattedDate ( void );                   // Retorna a data recuperada do sevidor NTP após a última atualização
-  //
+    String getFormattedTimeDate ( void );               // Retorna o tempo e a data no formato iso-8601

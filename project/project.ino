@@ -3,18 +3,12 @@
 //Configurações de Sensores
 DHT dht(DHT_PIN, DHT_TYPE);
 
-// Informações básicas do servidor...
-const char *host =  "www.megatecnologia.com.br"; //URL servidor
-const char *route = "/controle/silas.json";
-const char *query = "?chave=523DA-0D1DD-A84D9-EF34B-F1B31-99AC9-28"; //Chave da aplicação |parâmetro chave|
-
 //Parâmetros de Configuração |SETUP| disponíveis via página de configuração do servidor
 extern const char PROGMEM index_html[]; //String HTML
 extern ESP8266WebServer server;
 extern DNSServer dns;
 
 //Inicia o contador que receberá o valor de millis a cada envio
-//Seu overflow deve ocorrer a cada 50 dias, aproximadamente
 unsigned long counter = 0;
 unsigned long timerControl;
 unsigned int interval_timestamp = 0;
@@ -23,7 +17,7 @@ unsigned long interval;
 byte error_status;
 bool no_error = true;
 int blink_counter = 0;
-//Todos essa valores desconsideram um possível atraso na execução do programa
+
 // Arquivos de armazenamento de dados
 const char * sensors_data_path = "/data/data.csv";
 const char * interval_file_path = "/data/interval.txt";
@@ -56,7 +50,7 @@ void setup()
   Serial.begin(115200);
 
     //deleteFile(interval_file_path);
-    //deleteFile(sensors_data_path);
+    deleteFile(sensors_data_path);
     //deleteFile("/time/custom-data.txt");
     //deleteFile("/time/custom-time.txt");
     
@@ -83,9 +77,11 @@ void loop()
   if ( (timerControl = millis()) - counter >= interval ) {
     no_error = true; //reseta variável
     turn_off_leds(); //apaga todos os LEDs de sinalização
-    //        requestServer();  REQUISÇÃO AO SERVIDOR DESATIVADA
-    //        Serial.println("Enviando Requisição ao servidor");
-
+    
+    if (true) {
+      Serial.println("Enviando Requisição ao servidor");
+      requestServer();
+    }
                                                                       // CASO NÃO HAJA INTERNERT, NÂO HAVERÁ ACESSO AO SERVIDOR NTP
     if (!ntpClient.isTimeSet()) {  // Se o tempo não for definido automaticamente pelo servidor NTP
 
@@ -97,7 +93,7 @@ void loop()
       #endif
     }
     
-    appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + ntpClient.getFormattedTime() + " " + getFormattedDate() + "\n");
+    appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + getFormattedTimeDate() + "\n");
     readFile(sensors_data_path);
     
     Serial.print("Intervalo definido para: "); Serial.println(interval);
@@ -152,7 +148,8 @@ void loop()
 }
 
 
-String getFormattedDate (void) {
+String getFormattedDate (void)
+{
   time_t epochTime = ntpClient.getEpochTime();
   struct tm *ptm = gmtime(&epochTime);
  
@@ -179,8 +176,13 @@ String getFormattedDate (void) {
 
   
   //Print complete date:
-  String currentDate = monthDayStr + "/" + currentMonthStr + "/" + currentYearStr;
+  String currentDate = monthDayStr + "-" + currentMonthStr + "-" + currentYearStr;
   return currentDate;
+}
+
+String getFormattedTimeDate()
+{
+  return getFormattedDate() + "T" + ntpClient.getFormattedTime() + "-0300";  
 }
 
 
