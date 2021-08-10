@@ -293,13 +293,13 @@ const char request_config_html[] PROGMEM = R"rawliteral(
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Configurar pacote de requisição</title>
+    <title>Configurações avançadas</title>
     <link href="css.css" rel="stylesheet">
 </head>
 <body>
 
 <section class="form">
-  <form action="/request-config">
+  <form action="/request-config" id="request-config">
     HOST:
     <input type="text" value="" id="host" name="host" required="">
     PATH:
@@ -311,6 +311,12 @@ const char request_config_html[] PROGMEM = R"rawliteral(
     <input type="button" class="cancel-submit" onclick="window.location='/';" value="Cancelar">
   </form>
 </section>
+
+<textarea rows="6" cols="70" name="json" id="json" form="request-config" placeholder="Formato do corpo da requisição HTTP"></textarea>
+<pre>
+[T] substitui o texto pela temperatura lida no momento, bem como 
+[H] é reescrito de acordo com a umidade lida no sensor.
+</pre>
 
 </body>
 )rawliteral";

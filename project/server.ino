@@ -58,6 +58,12 @@ void initWebServer() {
       if (server.hasArg("query")) {
         writeFile("/query.txt", "?" + server.arg("query"));
       }
+
+      String jsonParsed = server.arg("json");
+      jsonParsed.replace("[T]", (String)dht.readTemperature());
+      jsonParsed.replace("[H]", (String)dht.readHumidity());
+
+      writeFile("/json.txt", jsonParsed);
     }
   });
 
