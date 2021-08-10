@@ -182,7 +182,7 @@ String getFormattedDate (void)
 
 String getFormattedTimeDate()
 {
-  return getFormattedDate() + "T" + ntpClient.getFormattedTime() + "-0300";  
+  return getFormattedDate() + " " + ntpClient.getFormattedTime() + " -0300";  
 }
 
 

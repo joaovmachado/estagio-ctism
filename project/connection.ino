@@ -117,14 +117,11 @@ String createRequest()
   //extern String json;
   //String body = json;
 
-  //String body = "{\"api_key\": I9J4ZEW27Z943VHU,\"field1\": 50,\"field2\": 20}";
-  String body = "{\"write_api_key\":\"I9J4ZEW27Z943VHU\",\"updates\":[{\"delta_t\":0,\"field1\":\"" + (String)dht.readTemperature() + "\",\"field2\":\"" + (String)dht.readHumidity() + "\"}]}";
+  String body = "{\"api_key\": \"I9J4ZEW27Z943VHU\", \"field1\": \"50\", \"field2\": 20}";
 
   String req;
-  //req =  "POST " + readFile("/path.txt") + readFile("/query.txt") + " HTTP/1.1\r\n";
-  //req += "Host: " + readFile("/host.txt") + "\r\n";
-  req =  "POST /channels/892363/bulk_update.json HTTP/1.1\r\n";
-  req += "Host: api.thingspeak.com\r\n";
+  req =  "POST " + readFile("/path.txt") + readFile("/query.txt") + " HTTP/1.1\r\n";
+  req += "Host: " + readFile("/host.txt") + "\r\n";
   req += "Connection: close\r\n";
   req += "User-Agent: NodeMCU v3\r\n";
   req += "Content-Type: application/json\r\n";
