@@ -1,17 +1,14 @@
-unsigned long interval = 15000;
-
-
 int getInterval() {
 
-  String hold_interval_mstring = readFile("/data/interval.txt"); //valor salvo na memória que define o intervalo
+  String hold_interval_mstring = readFile(interval_file_path); //valor salvo na memória que define o intervalo
 
   //Tratamento de exceção caso o valor lido na memória retorne um erro
   if (hold_interval_mstring != "failed") {
     interval = hold_interval_mstring.toInt();
   }
-  else if (!LittleFS.exists("/data/interval.txt")) {
+  else if (!LittleFS.exists(interval_file_path)) {
       Serial.println("Não foi encontrado o arquivo /data/interval.txt, definindo intervalo para 20 segundos. [Forçado]");
-      writeFile("/data/interval.txt", "20000");
+      writeFile(interval_file_path, "20000");
       interval = 20000;
   }
   return interval;
@@ -19,7 +16,7 @@ int getInterval() {
 
 
 void setInterval( int set_value ) {
-  writeFile("/data/interval.txt", (String)set_value); //Escreve o intervalo obtido na memoria
+  writeFile(interval_file_path, (String)set_value); //Escreve o intervalo obtido na memoria
 }
 
 
@@ -40,17 +37,36 @@ void notFound() {
 void initWebServer() {
   //E necessário inicializar rede WiFi -> ou seja, deve vir depois de WiFi.begin()
   //Ver server.serveStatic -> SPIFFS
-  
+
   server.on("/", HTTP_GET, [](){
     server.send_P(200, "text/html", index_html); //utilizamos send_P porque os dados estão na memeria flash (PROGMEM)
   });
 
+  server.on("/request-config", HTTP_GET, [](){
+    server.send_P(200, "text/html", request_config_html);
+
+    if (server.hasArg("host")) {
+      writeFile("/host.txt", server.arg("host"));
+      
+      if (server.hasArg("path")) {
+        writeFile("/path.txt", server.arg("path"));
+      }
+      else {
+        writeFile("/path.txt", "/");
+      }
+
+      if (server.hasArg("query")) {
+        writeFile("/query.txt", "?" + server.arg("query"));
+      }
+    }
+  });
+
   server.on("/data", HTTP_GET, [](){
 
-    File file = LittleFS.open("/data.csv", "r");
+    File file = LittleFS.open(sensors_data_path, "r");
     server.streamFile(file, "text/csv");
     file.close();
-    });
+  });
  
   server.on("/get", HTTP_GET, [](){ //quando o client submitar, nosso action o joga na rota de "/get"
     if (server.hasArg("input1")){
@@ -86,7 +102,7 @@ void initWebServer() {
 
   server.on("/delete-sensors-data", HTTP_GET, [](){
     if (server.arg("trigger") == "true"){
-      deleteFile("/data.csv");  
+      deleteFile(sensors_data_path);  
     }
     server.sendHeader("Location", "/", true); // Redireciona para a homepage
     server.send(302); 
@@ -116,7 +132,7 @@ void initWebServer() {
   });
 
   server.on("/luminosity", HTTP_GET, [](){
-    server.send(200, "text/plain", String( convertToLux(analogRead(LDR_PIN)) )); 
+    server.send(200, "text/plain", String( analogValueToPercent(analogRead(LDR_PIN)) ) + "%"); 
   });
 //
 
