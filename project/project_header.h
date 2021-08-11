@@ -32,8 +32,10 @@
     
     //led_rgb.ino  -  Funções de controle dos LEDs no circuito do projeto
     void setLedsPinMode( void );                        // Define os pinos digitais conectados aos LEDs como pinos de saída
+    void testLeds();                                    // Liga todos os LEDs sequencialmente para fins de teste
     void led_error( void );                             // Ativa LED vermelho
     void led_waiting( void );                           // Ativa LED azul
+    void led_powerup();                                 // Ativa e desativa todos os LEDs ao mesmo tempo, luz branca
     void led_success( void );                           // Ativa LED verde
     void turn_off_leds( void );                         // Desliga todos os LEDs que estiverem ligados
     

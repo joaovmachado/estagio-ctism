@@ -48,14 +48,13 @@ void setup()
   strcpy(custom_date, readFile("/time/custom-date.txt").c_str());
   
   Serial.begin(115200);
-
-    //deleteFile(interval_file_path);
-    deleteFile(sensors_data_path);
-    //deleteFile("/time/custom-data.txt");
-    //deleteFile("/time/custom-time.txt");
     
   setLedsPinMode(); //Inicializa pinMode dos leds de sinalização como output
   initWiFiManager();
+
+  testLeds();
+  error_status = 254;
+  
   initWebServer();
   displayNetInfo(); // Exibe SSID, IP e RSSI da rede na comunicacao Serial
   saveSTAIp(); // Guarda o IP obtido no modo Station na memória 
@@ -109,6 +108,10 @@ void loop()
       case 255:
         //pisca azul a cada segundo
         led_waiting();
+        break;
+      case 254:
+        //ativa e desativa rapidamente todos os leds ao mesmo tempo
+        led_powerup();
         break;
       case 0:
         //pisca verde uma vez

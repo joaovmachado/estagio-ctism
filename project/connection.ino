@@ -28,7 +28,7 @@ void initWiFiManager()
   // Copia os valores obtidos para custom_time e custom_date 
   strcpy(custom_time, custom_time_parameter.getValue());
   strcpy(custom_date, custom_date_parameter.getValue());
-
+  
   writeFile("/time/custom-time.txt", custom_time);
   writeFile("/time/custom-date.txt", custom_date);
 
