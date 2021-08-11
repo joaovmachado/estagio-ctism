@@ -113,8 +113,11 @@ String createRequest()
   //extern String json;
   //String body = json;
 
-  String body = readFile("/json.txt");
-  //{"api_key": "I9J4ZEW27Z943VHU", "field1": "50", "field2": 20}
+  String jsonParsed = readFile("/json.txt");
+  jsonParsed.replace("[T]", (String)dht.readTemperature());
+  jsonParsed.replace("[H]", (String)dht.readHumidity());
+
+  String body = jsonParsed;
 
   String req;
   req =  "POST " + readFile("/path.txt") + readFile("/query.txt") + " HTTP/1.1\r\n";
