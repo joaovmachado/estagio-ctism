@@ -4,6 +4,11 @@ void setLedsPinMode() {
   pinMode(BLUE_LED, OUTPUT);
 }
 
+void led_portal_waiting() {
+  digitalWrite(RED_LED, HIGH);
+  digitalWrite(BLUE_LED, HIGH);
+}
+
 void led_error() {
   //Serial.println("[Led_ERROR] " + (String)(digitalRead(RED_LED)) + " -> " + (String)(!digitalRead(RED_LED)));
   digitalWrite(RED_LED, (!digitalRead(RED_LED)));

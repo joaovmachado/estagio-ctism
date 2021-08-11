@@ -32,6 +32,7 @@
     
     //led_rgb.ino  -  Funções de controle dos LEDs no circuito do projeto
     void setLedsPinMode( void );                        // Define os pinos digitais conectados aos LEDs como pinos de saída
+    void led_portal_waiting( void );                    // Ativa o LED vermelho e azul ao mesmo tempo, deve ser usado para indicar espera de configuração
     void led_error( void );                             // Ativa LED vermelho
     void led_waiting( void );                           // Ativa LED azul
     void led_success( void );                           // Ativa LED verde

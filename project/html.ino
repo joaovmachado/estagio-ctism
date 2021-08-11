@@ -41,7 +41,7 @@ const char index_html[] PROGMEM = R"rawliteral(
         <span class="ti" id="humidity">
         </span>
 
-        <p>Luminosidade (lux): </p>
+        <p>Luminosidade (%): </p>
         <span class="ti" id="luminosity">
         </span>
     </section>
@@ -294,7 +294,6 @@ const char request_config_html[] PROGMEM = R"rawliteral(
 <head>
     <meta charset="UTF-8">
     <title>Configurações avançadas</title>
-    <link href="css.css" rel="stylesheet">
 </head>
 <body>
 
