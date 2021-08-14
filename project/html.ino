@@ -314,7 +314,9 @@ const char request_config_html[] PROGMEM = R"rawliteral(
 <textarea rows="6" cols="70" name="json" id="json" form="request-config" placeholder="Formato do corpo da requisição HTTP"></textarea>
 <pre>
 [T] substitui o texto pela temperatura lida no momento, bem como 
-[H] é reescrito de acordo com a umidade lida no sensor.
+[H] é reescrito de acordo com a umidade lida no sensor, 
+[L] é trocado pela leitura da luminância em porcentagem e
+[TM_DATE] retorna o tempo e a hora formatada.
 </pre>
 
 </body>

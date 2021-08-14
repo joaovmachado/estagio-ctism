@@ -174,13 +174,13 @@ String getFormattedDate (void)
 
   
   //Print complete date:
-  String currentDate = monthDayStr + "-" + currentMonthStr + "-" + currentYearStr;
+  String currentDate = currentYearStr + "-" + currentMonthStr + "-" + monthDayStr;
   return currentDate;
 }
 
 String getFormattedTimeDate()
 {
-  return getFormattedDate() + " " + ntpClient.getFormattedTime() + " -0300";  
+  return getFormattedDate() + "T" + ntpClient.getFormattedTime() + "-03:00";  
 }
 
 

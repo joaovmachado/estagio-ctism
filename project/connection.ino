@@ -116,6 +116,8 @@ String createRequest()
   String jsonParsed = readFile("/json.txt");
   jsonParsed.replace("[T]", (String)dht.readTemperature());
   jsonParsed.replace("[H]", (String)dht.readHumidity());
+  jsonParsed.replace("[TM_DATE]", (String)getFormattedTimeDate());
+  jsonParsed.replace("[L]", (String)analogValueToPercent(analogRead(LDR_PIN)));
 
   String body = jsonParsed;
 
