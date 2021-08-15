@@ -88,8 +88,10 @@ void initWebServer() {
       int seconds = response.substring(6, 8).toInt() + minutes; // Valor dos seconds
       interval = seconds * 1000; // valor dos seconds -> milissegundos, a leitura do intervalo é totalmente convertida em milissegundos
 
-      setInterval(interval); //Função que armazena o intervalo na memória flash do esp8266, não confundir com a função setInterval definida no JavaScript da página
+      setInterval(interval); // Função que armazena o intervalo na memória flash do esp8266, não confundir com a função setInterval definida no JavaScript da página
       
+      ntpClient.setUpdateInterval(interval - 10000); // Atualiza o tempo de sincronização com o servidor para o novo intervalo definido
+
       server.send_P(200, "text/html", get_html);
     }
     else {

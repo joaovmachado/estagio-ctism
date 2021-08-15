@@ -63,14 +63,14 @@ void setup()
   dht.begin();
   interval = getInterval();
 
+  ntpClient.setUpdateInterval(interval - 10000); // Tempo de sincronização com o servidor será de 10 segundos antes do intervalo de escrita
   ntpClient.forceUpdate();
 }
 
 void loop()
 {
   server.handleClient();
-
-  ntpClient.setUpdateInterval(interval - 2000); // Tempo de sincronização com o servidor será de 2 segundos antes do intervalo de escrita
+  ntpClient.update();
 
   if ( (timerControl = millis()) - counter >= interval ) {
     no_error = true; //reseta variável
