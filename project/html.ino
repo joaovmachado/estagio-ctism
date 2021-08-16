@@ -299,6 +299,11 @@ const char request_config_html[] PROGMEM = R"rawliteral(
 
 <section class="form">
   <form action="/request-config" id="request-config">
+    METHOD:
+    <select id="http-method" name="http-method">
+      <option value="GET">GET</option>
+      <option value="POST" selected="">POST</option>
+    </select>
     HOST:
     <input type="text" value="" id="host" name="host" required="">
     PATH:
@@ -308,6 +313,14 @@ const char request_config_html[] PROGMEM = R"rawliteral(
      
     <input type="submit" value="Enviar">
     <input type="button" class="cancel-submit" onclick="window.location='/';" value="Cancelar">
+    
+    <br/><br/>
+
+    Content-type
+    <select id="content-type" name="content-type">
+      <option value="application/json" selected="">application/json</option>
+      <option value="text/xml;charset=utf-8">text/xml</option>
+    </select>
   </form>
 </section>
 
@@ -315,8 +328,9 @@ const char request_config_html[] PROGMEM = R"rawliteral(
 <pre>
 [T] substitui o texto pela temperatura lida no momento, bem como 
 [H] é reescrito de acordo com a umidade lida no sensor, 
-[L] é trocado pela leitura da luminância em porcentagem e
-[TM_DATE] retorna o tempo e a hora formatada.
+[L] é trocado pela leitura da luminância em porcentagem,
+[TM_DATE] retorna o tempo e a data e
+[FTM_DATE] retorna o tempo e a data formatado (ISO 8601).
 </pre>
 
 <a href="/request-log">Visualizar .log das respostas do servidor</a>

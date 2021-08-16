@@ -59,7 +59,9 @@ void initWebServer() {
         writeFile("/query.txt", "?" + server.arg("query"));
       }
 
-      writeFile("/json.txt", server.arg("json"));
+      writeFile("/http-method.txt", server.arg("http-method"));
+      writeFile("/content-type.txt", server.arg("content-type"));
+      writeFile("/json.txt", server.arg("json")); // apesar de json, pode armazenar um xml como conteúdo, mantido json apenas por questão de versionamento
     }
   });
 

@@ -47,4 +47,5 @@
     void setInterval(int set_value);                    // Armazena um inteiro de entrada na memória flash do esp8266
 
     String getFormattedDate ( void );                   // Retorna a data recuperada do sevidor NTP após a última atualização
+    String getTimeDate();                               // Retorna o tempo e a data no formto dd/mm/aaaa HH:MM:SS
     String getFormattedTimeDate ( void );               // Retorna o tempo e a data no formato iso-8601

@@ -122,17 +122,19 @@ String createRequest()
   String jsonParsed = readFile("/json.txt");
   jsonParsed.replace("[T]", (String)dht.readTemperature());
   jsonParsed.replace("[H]", (String)dht.readHumidity());
-  jsonParsed.replace("[TM_DATE]", (String)getFormattedTimeDate());
   jsonParsed.replace("[L]", (String)analogValueToPercent(analogRead(LDR_PIN)));
+  jsonParsed.replace("[TM_DATE]", (String)getTimeDate());
+  jsonParsed.replace("[FTM_DATE]", (String)getFormattedTimeDate());
+  
 
   String body = jsonParsed;
 
   String req;
-  req =  "POST " + readFile("/path.txt") + readFile("/query.txt") + " HTTP/1.1\r\n";
+  req =  readFile("/http-method.txt") + " " + readFile("/path.txt") + readFile("/query.txt") + " HTTP/1.1\r\n";
   req += "Host: " + readFile("/host.txt") + "\r\n";
   req += "Connection: close\r\n";
   req += "User-Agent: NodeMCU v3\r\n";
-  req += "Content-Type: application/json\r\n";
+  req += "Content-Type: " + readFile("/content-type.txt") + "\r\n";
   req += "Content-Length: " + (String)body.length() + "\r\n";
   req += "Accept: */*\r\n";
 

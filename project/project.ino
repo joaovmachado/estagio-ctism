@@ -46,6 +46,8 @@ void setup()
 
   strcpy(custom_time, readFile("/time/custom-time.txt").c_str()); // Parâmetros customizados no Portal de Configuração
   strcpy(custom_date, readFile("/time/custom-date.txt").c_str());
+
+  deleteFile("/etc/request.log");
   
   Serial.begin(115200);
     
@@ -178,10 +180,14 @@ String getFormattedDate (void)
   return currentDate;
 }
 
+String getTimeDate()
+{
+  return getFormattedDate() + " " + ntpClient.getFormattedTime();
+}
+
 String getFormattedTimeDate()
 {
-  // return getFormattedDate() + "T" + ntpClient.getFormattedTime() + "-03:00";  ISO-8601
-  return getFormattedDate() + " " + ntpClient.getFormattedTime();
+  return getFormattedDate() + "T" + ntpClient.getFormattedTime() + "-03:00";  //ISO-8601
 }
 
 
