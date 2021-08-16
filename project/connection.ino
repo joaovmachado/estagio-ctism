@@ -67,22 +67,27 @@ void requestServer()
     Serial.println("[OK]");
     Serial.println("\n[Request:]");
     Serial.println(requestPkg);
+    appendFile("/etc/request.log", "\n\n\n[Request:]\n" + requestPkg);
   }
   else {
     error_status = 1; no_error = false;
     Serial.println("[ERRO]");
     Serial.println("Houve uma falha ao tentar estabelecer conexão com " + readFile("/host.txt"));
+    appendFile("/etc/request.log", "Houve uma falha ao tentar estabelecer conexão com " + readFile("/host.txt"));
   }
 
   bool is200 = false;
   bool isfirst_line = true;
 
   Serial.println("\n[Response:]");
+  appendFile("/etc/request.log", "\n\n[Response:]\n");
   
   while ( client.connected() || client.available() ) {
     if ( client.available() ) {
       String line = client.readStringUntil('\n');
       Serial.println(line);
+      
+      appendFile("/etc/request.log", line);
 
       if (isfirst_line == true && line.indexOf("2", 9) != -1) {
         is200 = true;
@@ -91,6 +96,7 @@ void requestServer()
       isfirst_line = false;
     }
   }
+  appendFile("/etc/request.log", "\n");
   Serial.print("is200? "); Serial.println(is200);
   Serial.print("no_error? "); Serial.println(no_error);
   

@@ -7,9 +7,9 @@ int getInterval() {
     interval = hold_interval_mstring.toInt();
   }
   else if (!LittleFS.exists(interval_file_path)) {
-      Serial.println("Não foi encontrado o arquivo /data/interval.txt, definindo intervalo para 20 segundos. [Forçado]");
-      writeFile(interval_file_path, "20000");
-      interval = 20000;
+      Serial.println("Não foi encontrado o arquivo /data/interval.txt, definindo intervalo para 2 minutos. [Forçado]");
+      writeFile(interval_file_path, "120000");
+      interval = 120000;
   }
   return interval;
 }
@@ -137,6 +137,12 @@ void initWebServer() {
 
   server.on("/luminosity", HTTP_GET, [](){
     server.send(200, "text/plain", String( analogValueToPercent(analogRead(LDR_PIN)) ) + "%"); 
+  });
+
+  server.on("/request-log", HTTP_GET, [](){
+    File file = LittleFS.open("/etc/request.log", "r");
+    server.streamFile(file, "text/plain");
+    file.close();
   });
 //
 

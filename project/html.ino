@@ -319,5 +319,7 @@ const char request_config_html[] PROGMEM = R"rawliteral(
 [TM_DATE] retorna o tempo e a hora formatada.
 </pre>
 
+<a href="/request-log">Visualizar .log das respostas do servidor</a>
+
 </body>
 )rawliteral";
