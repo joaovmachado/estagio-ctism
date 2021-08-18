@@ -93,7 +93,7 @@ void loop()
       #endif
     }
     
-    appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + getFormattedTimeDate() + "\n");
+    appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + getTimeDate() + "\n");
     readFile(sensors_data_path);
     
     Serial.print("Intervalo definido para: "); Serial.println(interval);
