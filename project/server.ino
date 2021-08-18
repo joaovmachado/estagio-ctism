@@ -143,7 +143,7 @@ void initWebServer() {
 
   server.on("/request-log", HTTP_GET, [](){
     File file = LittleFS.open("/etc/request.log", "r");
-    server.streamFile(file, "text/plain");
+    server.streamFile(file, "text/plain;charset=utf-8");
     file.close();
   });
 //
