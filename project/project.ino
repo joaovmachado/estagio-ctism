@@ -125,7 +125,7 @@ void loop()
         }
         break;
       case 2: //not retorned 2xx (blink 2x)
-      Serial.println("not retorned 2xx");
+      Serial.println("not returned 2xx");
        led_error();
         if (++blink_counter == 4) {
           error_status = 255;
