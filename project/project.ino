@@ -232,5 +232,5 @@ unsigned long convertToUnixTimestamp (String date_str, String time_str)
 
 float analogValueToPercent ( int value )
 {
-  return (value * 100.0) / 1024.0;
+  return (value * 100.0) / 1023.0;
 }
