@@ -1,9 +1,6 @@
 // Função que gerencia configuração da rede com WiFiManager
 void initWiFiManager()
 {
-  //WiFi.begin(ssid, passwd);
-  //WiFi.config(ip, gateway, subnet);
-
   WiFiManager wm;
 
   // Exibe o STA IP salvo na memória no topo da página de configuração, útil para acessar o webserver no modo STA, ainda que impreciso
@@ -16,12 +13,10 @@ void initWiFiManager()
   WiFiManagerParameter custom_date_parameter("customDateParameter", "Data atual (Formato: dd/mm/aaaa) ", (strcmp(custom_date, "failed") != 0) ? custom_date : "", 10);
   wm.addParameter(&custom_time_parameter);
   wm.addParameter(&custom_date_parameter);
-  
-  //wm.setCustomHeadElement("<p style=\"text-align=center\"><a href='/'>Baixar dados dos sensores</a></p>");
 
-  //      wm.setConfigPortalTimeout(30);
-  //wm.startConfigPortal("ESP8266", "redeesp8266");  // Inicia a página de configuração, sem consultar a memória
-  wm.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória - Seria interessante setar essa opcao no portal de configuracao
+  wm.setConfigPortalTimeout(120);
+  wm.startConfigPortal();  // Inicia a página de configuração, sem consultar a memória
+  //wm.autoConnect("AP_ESP"); // Fuça pelas últimas credenciais salvas na memória - Seria interessante setar essa opcao no portal de configuracao
   
   ntpClient.resetLastUpdate(); // A contagem da sincronização deve ser inicializada somente após a configuração no Config Portal
 
@@ -110,9 +105,6 @@ void requestServer()
 String createRequest()
 // Retorna uma String contendo uma requisição HTTP POST contendo um JSON no corpo do pacote
 {
-  //extern String json;
-  //String body = json;
-
   String jsonParsed = readFile("/json.txt");
   jsonParsed.replace("[T]", (String)dht.readTemperature());
   jsonParsed.replace("[H]", (String)dht.readHumidity());
