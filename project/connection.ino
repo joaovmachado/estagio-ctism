@@ -55,6 +55,7 @@ void requestServer()
 {
   WiFiClient client;
 
+  Serial.println("Enviando Requisição ao servidor");
   Serial.print("Gerando pacote HTTP... ");
   String requestPkg = createRequest();
   Serial.println("[OK]");

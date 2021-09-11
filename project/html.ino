@@ -28,21 +28,21 @@ const char index_html[] PROGMEM = R"rawliteral(
     </section>
 
     <p>O intervalo de medição atual é:</p>
-    <span class="ti" id="ShowInterval"></span>
+    <span class="ti" id="ShowInterval" style="height:2rem"></span>
 
     <a href="/request-config">Configurações Avançadas</a>
 
     <section id="feedback">
         <p>Temperatura (°C): </p>
-        <span class="ti" id="temperature">
+        <span class="ti" id="temperature" style="height:2rem">
         </span>
 
         <p>Umidade (%): </p>
-        <span class="ti" id="humidity">
+        <span class="ti" id="humidity" style="height:2rem">
         </span>
 
         <p>Luminosidade (%): </p>
-        <span class="ti" id="luminosity">
+        <span class="ti" id="luminosity" style="height:2rem">
         </span>
     </section>
 
@@ -241,7 +241,8 @@ a{
 )rawliteral";
 
 const char script_interval[] PROGMEM = R"rawliteral(
-function detectUnit(interval){
+
+function detectUnit(interval) {
   interval = parseInt(interval);
   interval = interval / 1000;
   console.log(interval);
@@ -256,31 +257,54 @@ function detectUnit(interval){
   return `${hrs}:${mins}:${sec}`;
 }
 
-var http = new XMLHttpRequest();
-  http.onreadystatechange = function(){ //é executada sempre que o status mudar
-      if(this.status == 200){
-          document.getElementById("ShowInterval").innerHTML = detectUnit(this.responseText);
-      }
-  };
+function sendIntervalRequest() {
+  var http = new XMLHttpRequest();
+  http.onreadystatechange = function() { //é executada sempre que o status mudar
 
-  http.open("GET", "/interval", true); //método - url - async
-  http.send();
-
-function sendRequest(variable){
-  http.onreadystatechange = function() {
     if (this.status == 200) {
-      document.getElementById(variable).innerText = this.responseText;
+        document.getElementById("ShowInterval").innerHTML = detectUnit(this.responseText);
     }
   };
-  http.open("GET", "/" + variable, false);
+
+  http.open("GET", "/interval");
+  http.send();
+
+}
+
+function sendRequest(variable) {
+  var http = new XMLHttpRequest();
+  http.onreadystatechange = async function() {
+    if (this.status == 200) {
+      document.getElementById(variable).innerText = await this.responseText;
+    }
+  };
+  http.open("GET", "/" + variable);
   http.send();
 }
 
+// Realiza a leitura da temperatura e umidade assim que o documento for carregado
+
+
+window.addEventListener('DOMContentLoaded', (event) => {
+  sendIntervalRequest();
+  sendRequest("temperature");
+  sendRequest("humidity");
+  sendRequest("luminosity");
+});
+  
+
 setInterval(function(){
+
+    sendRequest("luminosity");
+}, 5000);
+
+setInterval(function(){
+  
     sendRequest("temperature");
     sendRequest("humidity");
-    sendRequest("luminosity");
-}, 1000);
+}, 15000);
+
+
 )rawliteral";
 
 
@@ -310,10 +334,7 @@ const char request_config_html[] PROGMEM = R"rawliteral(
     <input type="text" value="" id="path" name="path" required="">
     QUERY:
     <input type="text" value="" id="query" name="query">
-     
-    <input type="submit" value="Enviar">
-    <input type="button" class="cancel-submit" onclick="window.location='/';" value="Cancelar">
-    
+
     <br/><br/>
 
     Content-type
@@ -321,6 +342,10 @@ const char request_config_html[] PROGMEM = R"rawliteral(
       <option value="application/json" selected="">application/json</option>
       <option value="text/xml;charset=utf-8">text/xml</option>
     </select>
+         
+    <input type="submit" value="Enviar">
+    <input type="button" class="cancel-submit" onclick="window.location='/';" value="Cancelar">
+    
   </form>
 </section>
 

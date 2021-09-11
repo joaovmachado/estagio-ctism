@@ -75,11 +75,21 @@ void initWebServer() {
   server.on("/get", HTTP_GET, [](){ //quando o client submitar, nosso action o joga na rota de "/get"
     if (server.hasArg("input1")){
 
-      if(server.hasArg("sendNow")){
-        if(server.arg("sendNow") == "1"){
-          counter = timerControl; //zera o contador de tempo decorrido
+      if (server.hasArg("sendNow")) {
+        if (server.arg("sendNow") == "1") {
+          /* 
+          Simplesmente uma cópia da mesma verificação que ocorre na função loop
+          com toda a certeza precisa ser refatorado ◔_◔
+          */
+          no_error = true; //reseta variável
+          turn_off_leds(); //apaga todos os LEDs de sinalização
           Serial.println("\nEnviando dados imediatamente e zerando contador...");
+          
           requestServer();
+          verifyNTPConnection();
+          
+          appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + getTimeDate() + "\n");
+          counter = timerControl; //zera o contador de tempo decorrido
         }
       }
 

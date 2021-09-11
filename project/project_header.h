@@ -49,3 +49,5 @@
     String getFormattedDate ( void );                   // Retorna a data recuperada do sevidor NTP após a última atualização
     String getTimeDate();                               // Retorna o tempo e a data no formto dd/mm/aaaa HH:MM:SS
     String getFormattedTimeDate ( void );               // Retorna o tempo e a data no formato iso-8601
+    void verifyNTPConnection ( void );                  // Verifica se a comunicação com o servidor NTP ocorreu com sucesso
+                                                        // caso não ocorra, passa a utilizar os dados de tempo e data informados pelo usuário
