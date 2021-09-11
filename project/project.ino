@@ -24,7 +24,7 @@ const char * interval_file_path = "/data/interval.txt";
  
 /** 
  *  Configuração do cliente NTP e do timedate input
- **/
+**/
 
 char custom_time[64];
 char custom_date[64];
@@ -46,6 +46,8 @@ void setup()
 
   strcpy(custom_time, readFile("/time/custom-time.txt").c_str()); // Parâmetros customizados no Portal de Configuração
   strcpy(custom_date, readFile("/time/custom-date.txt").c_str());
+
+  deleteFile("/etc/request.log");
   
   Serial.begin(115200);
     
@@ -73,28 +75,16 @@ void loop()
   ntpClient.update();
 
   if ( (timerControl = millis()) - counter >= interval ) {
+    
     no_error = true; //reseta variável
     turn_off_leds(); //apaga todos os LEDs de sinalização
-    
-    if (true) {
-      Serial.println("Enviando Requisição ao servidor");
-      requestServer();
-    }
-                                                                      // CASO NÃO HAJA INTERNERT, NÂO HAVERÁ ACESSO AO SERVIDOR NTP
-    if (!ntpClient.isTimeSet()) {  // Se o tempo não for definido automaticamente pelo servidor NTP
+    requestServer();
+    verifyNTPConnection();
 
-      ntpClient.setCurrentEpoc(custom_unixTimestamp);
-      
-      #ifdef TM_DEBUG
-      Serial.println("Não foi possível obter sincronização com o servidor NTP! [Error]");
-      Serial.println("Passando a utilizar data e tempo customizados: %s %s...", ntpClient.getFormattedTime().c_str(), getFormattedDate().c_str());
-      #endif
-    }
+    appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + getTimeDate() + "\n");
     
-    appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + getFormattedTimeDate() + "\n");
-    readFile(sensors_data_path);
-    
-    Serial.print("Intervalo definido para: "); Serial.println(interval);
+    Serial.print("Intervalo definido para: ");
+    Serial.println(interval);
     
     counter = timerControl;
 
@@ -145,7 +135,6 @@ void loop()
   }
 }
 
-
 String getFormattedDate (void)
 {
   time_t epochTime = ntpClient.getEpochTime();
@@ -159,31 +148,20 @@ String getFormattedDate (void)
  
   unsigned long currentYear = ptm->tm_year + 1900; //tm_years -> anos decorridos desde 1900
   String currentYearStr = String(currentYear);
-
-  #ifdef TM_DEBUG
-  Serial.println("=========TM Structure inside getFormattedDate()==========");
-  Serial.println(ptm->tm_mday);
-  Serial.println(ptm->tm_mon);
-  Serial.println(ptm->tm_year);
-
-  Serial.println("=========cY, cM, cmD in getFormattedDate()==========");
-  Serial.println(currentYearStr);
-  Serial.println(currentMonthStr);
-  Serial.println(monthDayStr);
-  #endif
-
   
-  //Print complete date:
   String currentDate = monthDayStr + "/" + currentMonthStr + "/" + currentYearStr;
   return currentDate;
 }
 
-String getFormattedTimeDate()
+String getTimeDate()
 {
-  // return getFormattedDate() + "T" + ntpClient.getFormattedTime() + "-03:00";  ISO-8601
   return getFormattedDate() + " " + ntpClient.getFormattedTime();
 }
 
+String getFormattedTimeDate()
+{
+  return getFormattedDate() + "T" + ntpClient.getFormattedTime() + "-03:00";  //ISO-8601
+}
 
 unsigned long convertToUnixTimestamp (String date_str, String time_str)
 {
@@ -208,25 +186,6 @@ unsigned long convertToUnixTimestamp (String date_str, String time_str)
 
   unsigned long currentEpoc = (unsigned long)mktime(&ct);
 
-  #ifdef TM_DEBUG
-  Serial.println("==========Datetime Parsed=========");
-  Serial.println(year);
-  Serial.println(month);
-  Serial.println(mday);
-  Serial.println(hour);
-  Serial.println(minute);
-  Serial.println(sec);
-  Serial.println("==========TM STRUCTURE=========");
-  Serial.println(ct.tm_year);
-  Serial.println(ct.tm_mon);
-  Serial.println(ct.tm_mday);
-  Serial.println(ct.tm_hour);
-  Serial.println(ct.tm_min);
-  Serial.println(ct.tm_sec);
-  Serial.println("==========CUSTOM_TIMESTSMP in UNIX EPOCH UTC-3=========");
-  Serial.println(currentEpoc);
-  #endif
-
   return currentEpoc;
 }
 
@@ -234,3 +193,17 @@ float analogValueToPercent ( int value )
 {
   return (value * 100.0) / 1023.0;
 }
+
+void verifyNTPConnection ()
+ {
+              // CASO NÃO HAJA INTERNERT, NÂO HAVERÁ ACESSO AO SERVIDOR NTP
+  if (!ntpClient.isTimeSet()) {  // Se o tempo não for definido automaticamente pelo servidor NTP
+
+    ntpClient.setCurrentEpoc(custom_unixTimestamp);
+    
+    #ifdef TM_DEBUG
+    Serial.println("Não foi possível obter sincronização com o servidor NTP! [Error]");
+    Serial.println("Passando a utilizar data e tempo customizados: %s %s...", ntpClient.getFormattedTime().c_str(), getFormattedDate().c_str());
+    #endif
+  }
+ }

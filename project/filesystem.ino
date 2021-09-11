@@ -44,7 +44,7 @@ void writeFile(const char * path, String input) {
 
 
 void appendFile(const char * path, String message) {
-  Serial.printf("Anexando ao arquivo: %s", path);
+  //Serial.printf("Anexando ao arquivo: %s", path);
 
   File file = LittleFS.open(path, "a");
   if (!file) {
@@ -54,9 +54,7 @@ void appendFile(const char * path, String message) {
     Serial.println("   Não foi possível abrir o arquivo");
     return;
   }
-  if (file.print(message)) {
-    Serial.println(" [OK]");
-  } else {
+  if (!file.print(message)) {
     error_status = 3;
     no_error = false;
     Serial.println(" [FAILED]");

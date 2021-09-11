@@ -7,9 +7,9 @@ int getInterval() {
     interval = hold_interval_mstring.toInt();
   }
   else if (!LittleFS.exists(interval_file_path)) {
-      Serial.println("Não foi encontrado o arquivo /data/interval.txt, definindo intervalo para 20 segundos. [Forçado]");
-      writeFile(interval_file_path, "20000");
-      interval = 20000;
+      Serial.println("Não foi encontrado o arquivo /data/interval.txt, definindo intervalo para 2 minutos. [Forçado]");
+      writeFile(interval_file_path, "120000");
+      interval = 120000;
   }
   return interval;
 }
@@ -59,7 +59,9 @@ void initWebServer() {
         writeFile("/query.txt", "?" + server.arg("query"));
       }
 
-      writeFile("/json.txt", server.arg("json"));
+      writeFile("/http-method.txt", server.arg("http-method"));
+      writeFile("/content-type.txt", server.arg("content-type"));
+      writeFile("/json.txt", server.arg("json")); // apesar de json, pode armazenar um xml como conteúdo, mantido json apenas por questão de versionamento
     }
   });
 
@@ -73,11 +75,21 @@ void initWebServer() {
   server.on("/get", HTTP_GET, [](){ //quando o client submitar, nosso action o joga na rota de "/get"
     if (server.hasArg("input1")){
 
-      if(server.hasArg("sendNow")){
-        if(server.arg("sendNow") == "1"){
-          counter = timerControl; //zera o contador de tempo decorrido
+      if (server.hasArg("sendNow")) {
+        if (server.arg("sendNow") == "1") {
+          /* 
+          Simplesmente uma cópia da mesma verificação que ocorre na função loop
+          com toda a certeza precisa ser refatorado ◔_◔
+          */
+          no_error = true; //reseta variável
+          turn_off_leds(); //apaga todos os LEDs de sinalização
           Serial.println("\nEnviando dados imediatamente e zerando contador...");
+          
           requestServer();
+          verifyNTPConnection();
+          
+          appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + getTimeDate() + "\n");
+          counter = timerControl; //zera o contador de tempo decorrido
         }
       }
 
@@ -137,6 +149,12 @@ void initWebServer() {
 
   server.on("/luminosity", HTTP_GET, [](){
     server.send(200, "text/plain", String( analogValueToPercent(analogRead(LDR_PIN)) ) + "%"); 
+  });
+
+  server.on("/request-log", HTTP_GET, [](){
+    File file = LittleFS.open("/etc/request.log", "r");
+    server.streamFile(file, "text/plain;charset=utf-8");
+    file.close();
   });
 //
 

@@ -50,6 +50,7 @@ void requestServer()
 {
   WiFiClient client;
 
+  Serial.println("Enviando Requisição ao servidor");
   Serial.print("Gerando pacote HTTP... ");
   String requestPkg = createRequest();
   Serial.println("[OK]");
@@ -62,22 +63,27 @@ void requestServer()
     Serial.println("[OK]");
     Serial.println("\n[Request:]");
     Serial.println(requestPkg);
+    appendFile("/etc/request.log", "\n\n\n[Request:]\n" + requestPkg);
   }
   else {
     error_status = 1; no_error = false;
     Serial.println("[ERRO]");
     Serial.println("Houve uma falha ao tentar estabelecer conexão com " + readFile("/host.txt"));
+    appendFile("/etc/request.log", "Houve uma falha ao tentar estabelecer conexão com " + readFile("/host.txt"));
   }
 
   bool is200 = false;
   bool isfirst_line = true;
 
   Serial.println("\n[Response:]");
+  appendFile("/etc/request.log", "\n\n[Response:]\n");
   
   while ( client.connected() || client.available() ) {
     if ( client.available() ) {
       String line = client.readStringUntil('\n');
       Serial.println(line);
+      
+      appendFile("/etc/request.log", line);
 
       if (isfirst_line == true && line.indexOf("2", 9) != -1) {
         is200 = true;
@@ -86,6 +92,7 @@ void requestServer()
       isfirst_line = false;
     }
   }
+  appendFile("/etc/request.log", "\n");
   Serial.print("is200? "); Serial.println(is200);
   Serial.print("no_error? "); Serial.println(no_error);
   
@@ -108,17 +115,19 @@ String createRequest()
   String jsonParsed = readFile("/json.txt");
   jsonParsed.replace("[T]", (String)dht.readTemperature());
   jsonParsed.replace("[H]", (String)dht.readHumidity());
-  jsonParsed.replace("[TM_DATE]", (String)getFormattedTimeDate());
   jsonParsed.replace("[L]", (String)analogValueToPercent(analogRead(LDR_PIN)));
+  jsonParsed.replace("[TM_DATE]", (String)getTimeDate());
+  jsonParsed.replace("[FTM_DATE]", (String)getFormattedTimeDate());
+  
 
   String body = jsonParsed;
 
   String req;
-  req =  "POST " + readFile("/path.txt") + readFile("/query.txt") + " HTTP/1.1\r\n";
+  req =  readFile("/http-method.txt") + " " + readFile("/path.txt") + readFile("/query.txt") + " HTTP/1.1\r\n";
   req += "Host: " + readFile("/host.txt") + "\r\n";
   req += "Connection: close\r\n";
   req += "User-Agent: NodeMCU v3\r\n";
-  req += "Content-Type: application/json\r\n";
+  req += "Content-Type: " + readFile("/content-type.txt") + "\r\n";
   req += "Content-Length: " + (String)body.length() + "\r\n";
   req += "Accept: */*\r\n";
 
