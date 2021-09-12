@@ -85,8 +85,8 @@ void initWebServer() {
           turn_off_leds(); //apaga todos os LEDs de sinalização
           Serial.println("\nEnviando dados imediatamente e zerando contador...");
           
-          requestServer();
           verifyNTPConnection();
+          requestServer();
           
           appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + getTimeDate() + "\n");
           counter = timerControl; //zera o contador de tempo decorrido

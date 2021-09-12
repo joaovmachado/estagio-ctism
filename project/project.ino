@@ -78,8 +78,8 @@ void loop()
     
     no_error = true; //reseta variável
     turn_off_leds(); //apaga todos os LEDs de sinalização
-    requestServer();
     verifyNTPConnection();
+    requestServer();
 
     appendFile(sensors_data_path, (String)dht.readTemperature() + "," + (String)dht.readHumidity() + "," + getTimeDate() + "\n");
     
